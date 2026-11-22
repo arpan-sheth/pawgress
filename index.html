@@ -41,7 +41,8 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-botto
 .pill svg{width:18px;height:18px}
 .grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;align-items:start}
 .roomcol{position:sticky;top:16px}
-@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.roomcol{position:static}.grid.styling .roomcol{position:sticky;top:0;z-index:5}.room.mini svg{height:190px}}
+@media(min-width:901px){.room{max-width:calc((100vh - 40px) * 1.667);margin:0 auto}}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.roomcol{position:static}.grid.styling .roomcol{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0 10px;margin-top:-8px}.grid.styling .room{max-width:min(100%,62vh);margin:0 auto}.room.mini svg{height:190px}}
 .room{position:relative;border-radius:26px;overflow:hidden;border:2px solid var(--edge);box-shadow:4px 5px 0 var(--line)}
 .room svg{display:block;width:100%;height:auto}
 .bubble{position:absolute;right:21%;top:11%;max-width:42%;background:var(--paper);color:var(--ink);padding:8px 14px;border:1.5px solid var(--edge);border-radius:18px 18px 4px 18px;font-weight:600;font-size:15px;line-height:1.4}
@@ -467,7 +468,7 @@ function scene(){const night=isNight(),st=stats();let wall='',floor='',back='',f
  if(has('cushion'))back+=`<g transform="rotate(10 488 254)"><rect x="458" y="226" width="60" height="50" rx="20" fill="#f3c4bb"/><rect x="466" y="234" width="44" height="34" rx="14" fill="#f8d6cf"/></g>`;
  if(has('mug'))front+=`<g transform="translate(378 270) scale(.8)"><path class="steam" d="M8 -8q-6 -8 0 -16M18 -8q-6 -8 0 -16" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8h4a6 6 0 0 1 0 14h-4" fill="none" stroke="#fffaf3" stroke-width="4"/><rect width="28" height="30" rx="7" fill="#fffaf3"/><rect y="10" width="28" height="6" fill="#f3b8ab"/>${kf(14,22,.9)}</g>`;
  const pet=`<g transform="translate(435 288) scale(.82)">${animal({sp:S.species,ci:S.ci,mood,acc:accNow()})}</g>`;
- const sv=$('#scene');sv.innerHTML=roomSVG(bg().id,{wall,floor,back,pet,front,glow:has('lamp')&&night},night);const small=tab!=='focus'&&innerWidth<=900;$('#room').classList.toggle('mini',small);sv.setAttribute('preserveAspectRatio',small?'xMidYMax slice':'xMidYMid meet')}
+ const sv=$('#scene');sv.innerHTML=roomSVG(bg().id,{wall,floor,back,pet,front,glow:has('lamp')&&night},night);const small=tab!=='focus'&&tab!=='style'&&innerWidth<=900;$('#room').classList.toggle('mini',small);sv.setAttribute('preserveAspectRatio',small?'xMidYMax slice':'xMidYMid meet')}
 
 /* ---------- Focus ---------- */
 const fmt=ms=>{const s=Math.ceil(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
@@ -616,7 +617,7 @@ $('#view').addEventListener('submit',e=>{e.preventDefault();const f=e.target.dat
  if(f==='write'){if(T.ans)return;const v=$('#wIn').value,q=T.qs[T.i],x=clean(v),y=clean(q.answer);answer(x===y||(y.length>=5&&lev(x,y)<=1),{picked:v})}
  if(f==='manual'){const m=Math.round(+$('#mMin').value);if(!(m>=5&&m<=600))return;logSession(m,$('#mSub').value.trim(),'manual',false);say(`Logged ${m} minutes. Proud of you!`);save();renderAll()}});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&S.run&&S.run.kind!=='break'&&S.run.paused==null&&remaining()>0)say(LINES.back)});
-addEventListener('resize',()=>{const small=tab!=='focus'&&innerWidth<=900;if(small!==$('#room').classList.contains('mini'))scene()});
+addEventListener('resize',()=>{const small=tab!=='focus'&&tab!=='style'&&innerWidth<=900;if(small!==$('#room').classList.contains('mini'))scene()});
 
 /* ---------- welcome ---------- */
 function welcome(){if(S.welcomed)return;let step=1,sp=S.species;const w=document.createElement('div');w.className='welcome';w.setAttribute('role','dialog');w.setAttribute('aria-label','Welcome to Pawgress');
