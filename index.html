@@ -41,7 +41,7 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-botto
 .pill svg{width:18px;height:18px}
 .grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;align-items:start}
 .roomcol{position:sticky;top:16px}
-@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.roomcol{position:static}.room.mini svg{height:190px}}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.roomcol{position:static}.grid.styling .roomcol{position:sticky;top:0;z-index:5}.room.mini svg{height:190px}}
 .room{position:relative;border-radius:26px;overflow:hidden;border:2px solid var(--edge);box-shadow:4px 5px 0 var(--line)}
 .room svg{display:block;width:100%;height:auto}
 .bubble{position:absolute;right:21%;top:11%;max-width:42%;background:var(--paper);color:var(--ink);padding:8px 14px;border:1.5px solid var(--edge);border-radius:18px 18px 4px 18px;font-weight:600;font-size:15px;line-height:1.4}
@@ -72,7 +72,12 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,[tabindex]:focus
 .tile{border:1.5px solid var(--line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:3px;background:var(--bg);font:inherit;color:inherit;text-align:left}
 .tile b{font-size:15px}.tile span{font-size:13px;color:var(--soft);flex:1}
 .tile .buy{margin-top:8px;min-height:40px;border-radius:99px;border:1.5px solid var(--edge);font:700 14px Nunito,sans-serif;cursor:pointer;background:var(--peach);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:5px}
-.tile .buy svg{width:15px;height:15px}.tile .buy:disabled{opacity:.45;cursor:not-allowed}.tile .buy.owned{background:var(--paper);border-color:var(--line)}
+.tile .buy svg{width:15px;height:15px}.buy:disabled{background:var(--chip)!important;color:var(--soft)!important;border-color:var(--line)!important;cursor:not-allowed;filter:grayscale(1);opacity:.75;font-weight:600}
+.shopt{cursor:pointer;transition:border-color .15s,transform .15s}.shopt:hover{border-color:var(--edge)}.tile.pv{border-color:#e08c7c;box-shadow:0 0 0 2px #f2b5a9 inset;background:var(--wash)}
+.pvbar{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--edge);border-radius:99px;padding:5px 5px 5px 14px;font-size:14px;white-space:nowrap;max-width:calc(100% - 16px)}
+.pvbar span{overflow:hidden;text-overflow:ellipsis}.pvbar .buy{min-height:36px;border-radius:99px;border:1.5px solid var(--edge);font:700 13px Nunito,sans-serif;cursor:pointer;background:var(--peach);color:var(--ink);display:inline-flex;align-items:center;gap:4px;padding:0 12px}.pvbar .buy svg{width:14px;height:14px}.pvbar .buy.owned{background:var(--paper)}
+.pvbar[hidden]{display:none}
+.tabs button.locked{opacity:.4;cursor:not-allowed}.tile .buy.owned{background:var(--paper);border-color:var(--line)}
 .tile.sel{border-color:var(--edge);background:var(--wash)}
 .pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
 .pick button{border:1.5px solid transparent;background:none;border-radius:18px;padding:4px 2px 8px;cursor:pointer;color:var(--ink);font:700 13px Nunito,sans-serif}
@@ -162,7 +167,7 @@ details summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:40px}
     <span class="pill" id="streakPill">0 day streak</span>
   </header>
   <div class="grid">
-    <div class="roomcol"><div class="room" id="room"><svg id="scene" viewBox="0 0 600 360" role="img" aria-label="Your companion's room"></svg><div class="bubble" id="bubble">Hi!</div></div></div>
+    <div class="roomcol"><div class="room" id="room"><svg id="scene" viewBox="0 0 600 360" role="img" aria-label="Your companion's room"></svg><div class="bubble" id="bubble">Hi!</div><div class="pvbar" id="pvbar" hidden></div></div></div>
     <section class="panel">
       <div class="tabs" role="tablist">
         <button role="tab" data-tab="focus">Focus</button><button role="tab" data-tab="plan">Planner</button><button role="tab" data-tab="cards">Cards</button><button role="tab" data-tab="stats">Stats</button><button role="tab" data-tab="style">Customize</button>
@@ -327,7 +332,7 @@ const KEY='studybuddy.v1';
 const fresh=()=>({v:2,species:'cat',ci:0,name:'Mochi',acorns:4,owned:[],hidden:[],bg:'peach',bgs:['peach','rain'],sessions:[],tasks:[],decks:[],tests:[],run:null,dur:25,updated:0,welcomed:false});
 const norm=s=>{const o=Object.assign(fresh(),s||{});if(!SP[o.species])o.species='cat';for(const k of['owned','hidden','bgs','sessions','tasks','decks','tests'])if(!Array.isArray(o[k]))o[k]=fresh()[k];if(!o.bgs.includes('peach'))o.bgs.push('peach','rain');return o};
 let S=fresh();try{const r=localStorage.getItem(KEY);if(r)S=norm(JSON.parse(r))}catch(e){}
-let tab='focus',ref=null,writing=false,pending=false,pushT=0,mood='',lineAt=0,happyUntil=0,audio=null,lastNight=null,offerBreak=false,pickDay=null,cv={mode:'list',deck:null},T=null,F=null,delArm=null;
+let pv=null,tab='focus',ref=null,writing=false,pending=false,pushT=0,mood='',lineAt=0,happyUntil=0,audio=null,lastNight=null,offerBreak=false,pickDay=null,cv={mode:'list',deck:null},T=null,F=null,delArm=null;
 const now=()=>Date.now();
 function save(){S.updated=now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(pushT);pushT=setTimeout(flush,900)}
 async function flush(){if(!ref)return;if(writing){pending=true;return}writing=true;try{await ref.set({state:JSON.parse(JSON.stringify(S))})}catch(e){if(e&&e.code==='invalid_argument')ref=null;if(e&&e.code==='quota_exceeded')toast('Account storage is full')}writing=false;if(pending){pending=false;flush()}}
@@ -338,12 +343,13 @@ function stats(){const td=today();let t=0,total=0;const days=new Set();for(const
  let streak=0,d=td;if(!days.has(d))d=addDays(d,-1);while(days.has(d)){streak++;d=addDays(d,-1)}
  let mastered=0,cards=0;for(const dk of S.decks)for(const c of dk.cards){cards++;if(c.box>=3)mastered++}
  return{today:t,total,streak,count:S.sessions.length,tasksDone:S.tasks.filter(x=>x.done).length,mastered,cards}}
-const has=id=>S.owned.includes(id)&&!S.hidden.includes(id);
+const has=id=>(S.owned.includes(id)&&!S.hidden.includes(id))||(!!pv&&pv.k==='item'&&pv.id===id);
+const locked=()=>!!S.run&&S.run.kind!=='break';
 const isNight=()=>{const h=new Date().getHours();return h>=19||h<6};
 const reward=(min,done)=>Math.floor(min/5)+(done?2:0);
 const remaining=()=>{const r=S.run;if(!r)return 0;return r.paused!=null?r.paused:Math.max(0,r.endAt-now())};
 const subjects=()=>[...new Set([...S.sessions.map(s=>s.subject),...S.tasks.map(t=>t.subject)].filter(Boolean))].slice(-30);
-const bg=()=>BGS.find(b=>b.id===S.bg)||BGS[0];
+const bg=()=>BGS.find(b=>b.id===(pv&&pv.k==='bg'?pv.id:S.bg))||BGS[0];
 const buddyName=()=>S.name||SP[S.species].name;
 
 const accNow=()=>({scarf:has('scarf'),beret:has('beret'),glasses:has('glasses'),bow:has('bow'),headphones:has('headphones')});
@@ -461,7 +467,7 @@ function scene(){const night=isNight(),st=stats();let wall='',floor='',back='',f
  if(has('cushion'))back+=`<g transform="rotate(10 488 254)"><rect x="458" y="226" width="60" height="50" rx="20" fill="#f3c4bb"/><rect x="466" y="234" width="44" height="34" rx="14" fill="#f8d6cf"/></g>`;
  if(has('mug'))front+=`<g transform="translate(378 270) scale(.8)"><path class="steam" d="M8 -8q-6 -8 0 -16M18 -8q-6 -8 0 -16" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M28 8h4a6 6 0 0 1 0 14h-4" fill="none" stroke="#fffaf3" stroke-width="4"/><rect width="28" height="30" rx="7" fill="#fffaf3"/><rect y="10" width="28" height="6" fill="#f3b8ab"/>${kf(14,22,.9)}</g>`;
  const pet=`<g transform="translate(435 288) scale(.82)">${animal({sp:S.species,ci:S.ci,mood,acc:accNow()})}</g>`;
- const sv=$('#scene');sv.innerHTML=roomSVG(S.bg,{wall,floor,back,pet,front,glow:has('lamp')&&night},night);const small=tab!=='focus'&&innerWidth<=900;$('#room').classList.toggle('mini',small);sv.setAttribute('preserveAspectRatio',small?'xMidYMax slice':'xMidYMid meet')}
+ const sv=$('#scene');sv.innerHTML=roomSVG(bg().id,{wall,floor,back,pet,front,glow:has('lamp')&&night},night);const small=tab!=='focus'&&innerWidth<=900;$('#room').classList.toggle('mini',small);sv.setAttribute('preserveAspectRatio',small?'xMidYMax slice':'xMidYMid meet')}
 
 /* ---------- Focus ---------- */
 const fmt=ms=>{const s=Math.ceil(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
@@ -531,18 +537,21 @@ function vStats(){const st=stats(),td=today(),days=Array.from({length:7},(_,i)=>
  ${S.sessions.length?`<details><summary>Session history</summary><ul class="list">${S.sessions.slice(-30).reverse().map(s=>`<li><span class="s">${esc(s.subject||'Study session')}<br><span class="muted">${new Date(s.at).toLocaleDateString(undefined,{month:'short',day:'numeric'})}${s.src==='manual'?' · logged':''}</span></span><span class="m">${s.min} min · +${s.earned}</span><button class="x" data-act="delSession" data-id="${s.id}" aria-label="Remove entry">×</button></li>`).join('')}</ul></details>`:''}`}
 
 /* ---------- Customize ---------- */
-function vStyle(){const P=SP[S.species];const shop=t=>`<div class="tiles">${ITEMS.filter(i=>i.t===t).map(it=>{const own=S.owned.includes(it.id);return `<div class="tile"><b>${it.n}</b><span>${it.d}</span>${own?`<button class="buy owned" data-act="toggleItem" data-id="${it.id}">${has(it.id)?(t==='wear'?'Take off':'Put away'):(t==='wear'?'Wear':'Place')}</button>`:`<button class="buy" data-act="buy" data-id="${it.id}" ${S.acorns<it.p?'disabled':''}>${ACORN}${it.p}</button>`}</div>`}).join('')}</div>`;
+const buyBtn=(act,id,p)=>{const short=p-S.acorns;return short>0?`<button class="buy" disabled title="You need ${short} more acorn${short>1?'s':''}">${ACORN}${p} · need ${short} more</button>`:`<button class="buy" data-act="${act}" data-id="${id}">Buy · ${ACORN}${p}</button>`};
+function pvInfo(){if(!pv)return null;if(pv.k==='bg'){const b=BGS.find(x=>x.id===pv.id);return b&&{n:b.n,p:b.p,act:'buyBg'}}const it=ITEMS.find(x=>x.id===pv.id);return it&&{n:it.n,p:it.p,act:'buy'}}
+function renderPv(){const el=$('#pvbar'),i=pvInfo();if(!i){el.hidden=true;el.innerHTML='';return}el.hidden=false;el.innerHTML=`<span>Previewing <b>${esc(i.n)}</b></span>${buyBtn(i.act,pv.id,i.p)}<button class="buy owned" data-act="endPreview">Done</button>`}
+function vStyle(){const P=SP[S.species];const shop=t=>`<div class="tiles">${ITEMS.filter(i=>i.t===t).map(it=>{const own=S.owned.includes(it.id);const on=pv&&pv.k==='item'&&pv.id===it.id;return `<div class="tile${own?'':' shopt'}${on?' pv':''}" ${own?'':`data-act="preview" data-k="item" data-id="${it.id}" role="button" tabindex="0" aria-label="Preview ${esc(it.n)}"`}><b>${it.n}</b><span>${on?'Previewing in your room':it.d}</span>${own?`<button class="buy owned" data-act="toggleItem" data-id="${it.id}">${has(it.id)?(t==='wear'?'Take off':'Put away'):(t==='wear'?'Wear':'Place')}</button>`:buyBtn('buy',it.id,it.p)}</div>`}).join('')}</div>`;
  return `<h3 style="margin-top:0">Study buddy</h3><div class="pick">${Object.keys(SP).map(k=>`<button data-act="species" data-v="${k}" aria-pressed="${S.species===k}">${mini(k,k===S.species?S.ci:0)}<span>${SP[k].label}</span></button>`).join('')}</div>
  <h3>Breed</h3><div class="ringwrap">${ring(S.species,S.ci,true)}<p class="breedname">${esc((P.br[S.ci]||P.br[0]).n)}</p><p class="muted center" style="margin:0">Tap a paw to choose a coat.</p></div>
  <label for="nm">Name</label><input id="nm" maxlength="20" value="${esc(S.name)}">
- <h3>Backgrounds</h3><div class="bgtiles">${BGS.map(b=>{const own=S.bgs.includes(b.id),sel=S.bg===b.id;return `<div class="tile ${sel?'sel':''}"><svg class="bgprev" viewBox="0 0 600 360" aria-hidden="true">${roomSVG(b.id,null,false)}</svg><div class="bgrow"><b>${b.n}</b><span class="price">${b.p?b.p+' acorns':'free'}</span></div><div class="dotsrow" aria-hidden="true">${b.dots.map(c=>`<i style="background:${c}"></i>`).join('')}</div>${own?`<button class="buy ${sel?'owned':''}" data-act="useBg" data-id="${b.id}">${sel?'In use':'Use'}</button>`:`<button class="buy" data-act="buyBg" data-id="${b.id}" ${S.acorns<b.p?'disabled':''}>${ACORN}${b.p}</button>`}</div>`}).join('')}</div>
+ <h3>Backgrounds</h3><div class="bgtiles">${BGS.map(b=>{const own=S.bgs.includes(b.id),sel=S.bg===b.id,on=pv&&pv.k==='bg'&&pv.id===b.id;return `<div class="tile${sel?' sel':''}${own?'':' shopt'}${on?' pv':''}" ${own?'':`data-act="preview" data-k="bg" data-id="${b.id}" role="button" tabindex="0" aria-label="Preview ${esc(b.n)}"`}><svg class="bgprev" viewBox="0 0 600 360" aria-hidden="true">${roomSVG(b.id,null,false)}</svg><div class="bgrow"><b>${b.n}</b><span class="price">${b.p?b.p+' acorns':'free'}</span></div><div class="dotsrow" aria-hidden="true">${b.dots.map(c=>`<i style="background:${c}"></i>`).join('')}</div>${own?`<button class="buy ${sel?'owned':''}" data-act="useBg" data-id="${b.id}">${sel?'In use':'Use'}</button>`:buyBtn('buyBg',b.id,b.p)}</div>`}).join('')}</div>
  <h3>Outfits</h3>${shop('wear')}<h3>Room decor</h3>${shop('decor')}`}
 
 /* ---------- core ---------- */
 function computeMood(){if(now()<happyUntil)return'happy';if(S.run)return S.run.kind==='break'?'idle':S.run.paused!=null?'idle':'focus';return isNight()?'sleep':'idle'}
 function say(t){lineAt=now();$('#bubble').textContent=t}
-function renderView(){document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));$('#view').innerHTML={focus:vFocus,plan:vPlan,cards:vCards,stats:vStats,style:vStyle}[tab]()}
-function renderAll(){mood=computeMood();scene();$('#sub').textContent=`${buddyName()} · ${bg().n}`;$('#acorns').textContent=S.acorns;$('#streakPill').textContent=`${stats().streak} day streak`;renderView()}
+function renderView(){const lk=locked();document.querySelectorAll('.tabs button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.tab===tab);if(b.dataset.tab==='style'){b.classList.toggle('locked',lk);b.setAttribute('aria-disabled',lk);b.title=lk?'Customize opens when your focus session ends':''}});$('.grid').classList.toggle('styling',tab==='style');$('#view').innerHTML={focus:vFocus,plan:vPlan,cards:vCards,stats:vStats,style:vStyle}[tab]()}
+function renderAll(){mood=computeMood();scene();$('#sub').textContent=`${buddyName()} · ${bg().n}`;$('#acorns').textContent=S.acorns;$('#streakPill').textContent=`${stats().streak} day streak`;renderPv();renderView()}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
 function chime(){try{if(!audio)return;const t=audio.currentTime;[523.25,659.25,783.99].forEach((f,i)=>{const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.18);g.gain.linearRampToValueAtTime(.16,t+i*.18+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.18+1.2);o.connect(g).connect(audio.destination);o.start(t+i*.18);o.stop(t+i*.18+1.3)})}catch(e){}}
 function earn(n,msg){if(n<=0)return;S.acorns+=n;happyUntil=now()+3200;toast(`+${n} acorn${n>1?'s':''}${msg?' · '+msg:''}`)}
@@ -552,10 +561,10 @@ function finish(done){const r=S.run;if(!r)return;S.run=null;
  else{const mm=done?r.dur:Math.floor((r.dur*60000-(r.paused!=null?r.paused:Math.max(0,r.endAt-now())))/60000);
   if(mm>=5){const e=logSession(mm,r.subject,'timer',done);chime();say(done?`We did it! ${mm} minutes. +${e} acorns.`:`${mm} minutes counts. +${e} acorns.`);offerBreak=true}else say('That’s okay. We can try again anytime.')}
  save();renderAll()}
-function startRun(kind,min,subject){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume()}catch(x){}S.run={kind,dur:min,endAt:now()+min*60000,paused:null,subject:subject||'',started:now()};offerBreak=false;say(kind==='break'?LINES.brk:LINES.focus[0]);save();renderAll()}
+function startRun(kind,min,subject){pv=null;if(kind!=='break'&&tab==='style')tab='focus';try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume()}catch(x){}S.run={kind,dur:min,endAt:now()+min*60000,paused:null,subject:subject||'',started:now()};offerBreak=false;say(kind==='break'?LINES.brk:LINES.focus[0]);save();renderAll()}
 
 /* ---------- events ---------- */
-document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.tab;renderAll()});
+document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.tab==='style'&&locked()){toast('Customize opens when your session ends');say('Stay with me! We can decorate after this session.');return}if(b.dataset.tab!=='style')pv=null;tab=b.dataset.tab;renderAll()});
 $('#view').addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const a=t.dataset.act,id=t.dataset.id,v=t.dataset.v;
  if(a!=='delDeck')delArm=null;
  switch(a){
@@ -585,12 +594,16 @@ $('#view').addEventListener('click',e=>{const t=e.target.closest('[data-act]');i
  case'delSession':{const s=S.sessions.find(x=>x.id===id);if(s){S.acorns=Math.max(0,S.acorns-s.earned);S.sessions=S.sessions.filter(x=>x!==s);save();renderAll()}break}
  case'species':{const names=Object.values(SP).map(p=>p.name);if(!S.name||names.includes(S.name))S.name=SP[v].name;S.species=v;S.ci=0;save();renderAll();say(`Hi, I’m ${buddyName()}!`);break}
  case'color':case'breed':S.ci=+v;save();renderAll();say(`${(SP[S.species].br[S.ci]).n}? I love it.`);break;
- case'buy':{const it=ITEMS.find(i=>i.id===id);if(it&&S.acorns>=it.p&&!S.owned.includes(id)){S.acorns-=it.p;S.owned.push(id);happyUntil=now()+3200;say(`Ooh, a ${it.n.toLowerCase()}! Thank you.`);save();renderAll()}break}
+ case'preview':pv=(pv&&pv.id===id&&pv.k===t.dataset.k)?null:{k:t.dataset.k,id};if(pv)say(t.dataset.k==='bg'?'Ooh, what a view! Want to move in?':'How do I look?');renderAll();break;
+ case'endPreview':pv=null;renderAll();break;
+ case'buy':{const it=ITEMS.find(i=>i.id===id);if(it&&S.acorns>=it.p&&!S.owned.includes(id)){S.acorns-=it.p;S.owned.push(id);S.hidden=S.hidden.filter(x=>x!==id);pv=null;happyUntil=now()+3200;say(`Ooh, a ${it.n.toLowerCase()}! Thank you.`);save();renderAll()}break}
  case'toggleItem':S.hidden=S.hidden.includes(id)?S.hidden.filter(x=>x!==id):[...S.hidden,id];save();renderAll();break;
- case'buyBg':{const b=BGS.find(x=>x.id===id);if(b&&S.acorns>=b.p&&!S.bgs.includes(id)){S.acorns-=b.p;S.bgs.push(id);S.bg=id;happyUntil=now()+3200;say('A new view! I love it.');save();renderAll()}break}
- case'useBg':S.bg=id;save();renderAll();break;
+ case'buyBg':{const b=BGS.find(x=>x.id===id);if(b&&S.acorns>=b.p&&!S.bgs.includes(id)){S.acorns-=b.p;S.bgs.push(id);S.bg=id;pv=null;happyUntil=now()+3200;say('A new view! I love it.');save();renderAll()}break}
+ case'useBg':S.bg=id;pv=null;save();renderAll();break;
  }});
-$('#view').addEventListener('keydown',e=>{const t=e.target.closest&&e.target.closest('[data-act=breed]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();t.dispatchEvent(new MouseEvent('click',{bubbles:true}));return}if((e.key==='Enter'||e.key===' ')&&e.target.dataset.act==='flip'){e.preventDefault();F.flipped=!F.flipped;renderView()}});
+$('#pvbar').addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;$('#view').dispatchEvent(new CustomEvent('pvact',{detail:t}))});
+$('#view').addEventListener('pvact',e=>{const t=e.detail,a=t.dataset.act,id=t.dataset.id;if(a==='endPreview'){pv=null;renderAll();return}const fake=document.createElement('button');fake.dataset.act=a;fake.dataset.id=id;fake.style.display='none';$('#view').appendChild(fake);fake.click();fake.remove()});
+$('#view').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('.shopt')){e.preventDefault();e.target.click();return}const t=e.target.closest&&e.target.closest('[data-act=breed]');if(t&&(e.key==='Enter'||e.key===' ')){e.preventDefault();t.dispatchEvent(new MouseEvent('click',{bubbles:true}));return}if((e.key==='Enter'||e.key===' ')&&e.target.dataset.act==='flip'){e.preventDefault();F.flipped=!F.flipped;renderView()}});
 $('#view').addEventListener('change',e=>{const id=e.target.id;
  if(id==='custom'){const v=Math.round(+e.target.value);if(v>=5&&v<=180){S.dur=v;save();renderView()}}
  if(id==='nm'){S.name=e.target.value.trim().slice(0,20)||SP[S.species].name;save();renderAll()}
