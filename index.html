@@ -51,24 +51,24 @@ header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-botto
 .panel{background:var(--paper);border:1.5px solid var(--line);border-radius:26px;padding:16px clamp(14px,2.2vw,24px) 22px}
 .tabs{display:flex;gap:2px;border-bottom:1.5px solid var(--line);margin:0 0 18px;overflow-x:auto}
 .tabs button{flex:1 0 auto;border:0;background:none;color:var(--soft);font:700 14.5px Nunito,sans-serif;min-height:46px;padding:0 10px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1.5px}
-.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:#eaa496}
+.tabs button[aria-selected=true]{color:var(--ink);border-bottom-color:color-mix(in srgb,var(--peach) 70%,#4b3832 30%)}
 .digits{font-size:clamp(56px,8vw,82px);font-weight:600;font-variant-numeric:tabular-nums;text-align:center;white-space:nowrap;letter-spacing:.01em}
 .bar{height:12px;background:var(--chip);border:1.5px solid var(--line);border-radius:9px;overflow:hidden;margin:12px 0 6px}.bar i{display:block;height:100%;background:#f1a99b;border-radius:9px;transition:width .5s linear}
 .muted{color:var(--soft);font-size:14px}.center{text-align:center}
 label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}
 input,textarea{width:100%;font:16px Nunito,sans-serif;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:10px 13px;min-height:46px}
 textarea{min-height:110px;resize:vertical}
-input:focus-visible,button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2.5px solid #eaa496;outline-offset:2px}
+input:focus-visible,button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2.5px solid color-mix(in srgb,var(--peach) 70%,#4b3832 30%);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font:700 15px Nunito,sans-serif;min-height:44px;padding:0 16px;border-radius:99px;cursor:pointer}
-.chip[aria-pressed=true]{background:var(--butter);border-color:var(--edge)}
+.chip[aria-pressed=true]{background:var(--peach);color:var(--btnink,var(--ink));border-color:var(--edge)}
 .chip.num{width:96px;padding:0 10px;text-align:center}
 .btn{display:block;width:100%;border:1.5px solid var(--edge);border-radius:99px;min-height:50px;font:700 17px Quicksand,Nunito,sans-serif;cursor:pointer;margin-top:16px;background:var(--peach);color:var(--btnink,var(--ink));box-shadow:0 3px 0 var(--edge);transition:transform .1s,box-shadow .1s}
 .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--edge)}
 .btn.ghost{background:var(--paper)}.btn.sm{min-height:44px;font-size:15.5px;margin-top:10px}
 .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 120px}
-.link{border:0;background:none;color:var(--ink);text-decoration:underline;text-decoration-color:#eaa496;text-underline-offset:3px;text-decoration-thickness:2px;font:700 15px Nunito,sans-serif;cursor:pointer;padding:8px 0;min-height:40px}
+.link{border:0;background:none;color:var(--ink);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--peach) 70%,#4b3832 30%);text-underline-offset:3px;text-decoration-thickness:2px;font:700 15px Nunito,sans-serif;cursor:pointer;padding:8px 0;min-height:40px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .tile{border:1.5px solid var(--line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:3px;background:var(--bg);font:inherit;color:inherit;text-align:left}
 .tile b{font-size:15px}.tile span{font-size:13px;color:var(--soft);flex:1}
@@ -80,7 +80,7 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,[tabindex]:focus
 .pvbar[hidden]{display:none}
 .tabs button.locked{opacity:.4;cursor:not-allowed}
 .bubble{pointer-events:none}
-.sbtn{cursor:pointer;font:inherit;font-weight:700;color:var(--ink)}.sbtn svg{width:17px;height:17px}.sbtn.on{background:var(--butter);border-color:var(--edge)}.gear{width:39px;height:39px;padding:0;justify-content:center;border-radius:50%;flex:none}.gear svg{width:21px;height:21px;display:block}.gear:hover svg{transform:rotate(30deg)}.gear svg{transition:transform .3s}.gear[aria-expanded=true]{background:var(--butter);border-color:var(--edge)}
+.sbtn{cursor:pointer;font:inherit;font-weight:700;color:var(--ink)}.sbtn svg{width:17px;height:17px}.sbtn.on{background:var(--peach);color:var(--btnink,var(--ink));border-color:var(--edge)}.gear{width:39px;height:39px;padding:0;justify-content:center;border-radius:50%;flex:none}.gear svg{width:21px;height:21px;display:block}.gear:hover svg{transform:rotate(30deg)}.gear svg{transition:transform .3s}.gear[aria-expanded=true]{background:var(--peach);color:var(--btnink,var(--ink));border-color:var(--edge)}
 .sw{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.sw button,.sw label.cust{width:42px;height:42px;border-radius:50%;border:3px solid var(--paper);box-shadow:0 0 0 1.5px var(--line);cursor:pointer;padding:0;margin:0;position:relative}
 .sw button[aria-pressed=true],.sw label.cust.on{box-shadow:0 0 0 2.5px var(--edge)}
 .sw label.cust{background:conic-gradient(#f6cdc4,#f8e6b3,#d6e5cb,#d4e3f1,#e2d6f3,#f6cdc4);display:grid;place-items:center;font:700 18px Nunito,sans-serif;color:var(--ink)}.sw label.cust input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;min-height:0;padding:0;border:0}
@@ -94,7 +94,7 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,[tabindex]:focus
 .sheethead{display:flex;align-items:center;justify-content:space-between}.sheethead h2{font-size:22px}
 .snd{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;align-items:center;padding:10px 0;border-top:1.5px dashed var(--line)}
 .snd b{display:block;font-size:15px}.snd span{font-size:13px}
-.snd .tg{grid-row:span 2;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--edge);background:var(--paper);color:var(--ink);cursor:pointer;display:grid;place-items:center}.snd .tg svg{width:20px;height:20px}.snd .tg[aria-pressed=true]{background:var(--butter)}
+.snd .tg{grid-row:span 2;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--edge);background:var(--paper);color:var(--ink);cursor:pointer;display:grid;place-items:center}.snd .tg svg{width:20px;height:20px}.snd .tg[aria-pressed=true]{background:var(--peach);color:var(--btnink,var(--ink))}
 .snd input[type=range]{grid-column:2;width:100%;min-height:24px;padding:0;border:0;background:none;-webkit-appearance:none;appearance:none;cursor:pointer}
 .snd input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:6px;background:var(--chip);border:1.5px solid var(--line)}
 .snd input[type=range]::-moz-range-track{height:8px;border-radius:6px;background:var(--chip);border:1.5px solid var(--line)}
@@ -102,7 +102,7 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,[tabindex]:focus
 .snd input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--peach);border:1.5px solid var(--edge)}
 .mform{display:flex;gap:8px}.mform input{flex:1}.mform .btn{width:auto;flex:none;padding:0 18px;margin:0}
 #musicBox iframe{display:block;width:100%;border:0;border-radius:14px;margin-top:10px;background:var(--chip)}
-.mrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;font-weight:700;font-size:14px}.mrow a{color:var(--ink);text-decoration-color:#eaa496;text-underline-offset:3px;overflow-wrap:anywhere}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;font-weight:700;font-size:14px}.mrow a{color:var(--ink);text-decoration-color:color-mix(in srgb,var(--peach) 70%,#4b3832 30%);text-underline-offset:3px;overflow-wrap:anywhere}
 @media(max-width:600px){.sheet{top:auto;bottom:0;left:0;right:0;width:auto;border-radius:24px 24px 0 0;max-height:82vh}}.room.canmove .drag{cursor:grab;touch-action:none}.drag.dragging{cursor:grabbing;filter:drop-shadow(0 8px 6px rgba(75,56,50,.28))}.tile .buy.owned{background:var(--paper);border-color:var(--line)}
 .tile.sel{border-color:var(--edge);background:var(--wash)}
 .pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:8px}
@@ -139,7 +139,7 @@ ul.list li .m{white-space:nowrap;font-weight:700}
 .days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
 .days button{border:1.5px solid var(--line);background:var(--bg);border-radius:16px;padding:6px 2px;cursor:pointer;color:var(--ink);font:600 12px Nunito,sans-serif;min-height:62px}
 .days button b{display:block;font:700 19px Quicksand,sans-serif}
-.days button[aria-pressed=true]{background:var(--butter);border-color:var(--edge)}
+.days button[aria-pressed=true]{background:var(--peach);color:var(--btnink,var(--ink));border-color:var(--edge)}
 .dots{display:block;height:8px;font-size:10px;line-height:8px;letter-spacing:1px;color:#e58f80}
 .flash{perspective:1000px;margin:12px 0}
 .flash .in{position:relative;min-height:210px;transition:transform .5s;transform-style:preserve-3d;cursor:pointer}
@@ -189,7 +189,7 @@ details summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:40px}
 <body>
 <div class="wrap">
   <header>
-    <button class="brand" id="brandBtn" type="button" aria-label="Pawgress. Tap for a message from Moki and Mochi"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#f6cdc4" stroke="#4b3832" stroke-width="2"/><g fill="#fffdf9" stroke="#4b3832" stroke-width="1.6"><ellipse cx="20" cy="25" rx="7.5" ry="6.5"/><circle cx="11.5" cy="17" r="3.4"/><circle cx="17" cy="12" r="3.4"/><circle cx="23" cy="12" r="3.4"/><circle cx="28.5" cy="17" r="3.4"/></g></svg><span class="bt"><span class="h1">Pawgress</span><small id="sub">Mochi’s room</small></span></button>
+    <button class="brand" id="brandBtn" type="button" aria-label="Pawgress. Tap for a message from Moki and Mochi"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" style="fill:var(--peach)" stroke="#4b3832" stroke-width="2"/><g fill="#fffdf9" stroke="#4b3832" stroke-width="1.6"><ellipse cx="20" cy="25" rx="7.5" ry="6.5"/><circle cx="11.5" cy="17" r="3.4"/><circle cx="17" cy="12" r="3.4"/><circle cx="23" cy="12" r="3.4"/><circle cx="28.5" cy="17" r="3.4"/></g></svg><span class="bt"><span class="h1">Pawgress</span><small id="sub">Mochi’s room</small></span></button>
     <button class="pill sbtn gear" id="setBtn" aria-expanded="false" aria-controls="settings" aria-label="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.03 4.66 L10.23 1.95 L13.77 1.95 L13.97 4.66 L15.80 5.42 L17.85 3.64 L20.36 6.15 L18.58 8.20 L19.34 10.03 L22.05 10.23 L22.05 13.77 L19.34 13.97 L18.58 15.80 L20.36 17.85 L17.85 20.36 L15.80 18.58 L13.97 19.34 L13.77 22.05 L10.23 22.05 L10.03 19.34 L8.20 18.58 L6.15 20.36 L3.64 17.85 L5.42 15.80 L4.66 13.97 L1.95 13.77 L1.95 10.23 L4.66 10.03 L5.42 8.20 L3.64 6.15 L6.15 3.64 L8.20 5.42Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" stroke-width="1.9"/></svg></button>
     <button class="pill sbtn" id="sndBtn" aria-expanded="false" aria-controls="sheet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="2.6" fill="currentColor"/><circle cx="16.5" cy="16" r="2.6" fill="currentColor"/></svg>Sounds</button>
     <span class="pill" title="Acorns"><svg viewBox="0 0 24 24"><path d="M5 10c0-3 3-5 7-5s7 2 7 5z" fill="#8a5a3b"/><path d="M12 5V2" stroke="#8a5a3b" stroke-width="2" stroke-linecap="round"/><path d="M6 10h12c0 6-3 10-6 11-3-1-6-5-6-11z" fill="#d9965b"/></svg><span id="acorns">0</span></span>
