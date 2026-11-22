@@ -15,6 +15,10 @@ A cozy study companion by Moki and Mochi. No account, no tracking, no paywall. E
 - 9 room backgrounds with window weather (rain, sakura petals, snow, starry loft and more)
 - Outfits (bow, glasses, scarf, headphones, beret) and room decor that grows as you study
 
+**Sounds**
+- Lo-fi music, white noise, ocean waves, rain and a fireplace, all generated live in the browser. Mix them with separate volumes.
+- Paste your own Spotify, YouTube, SoundCloud or Apple Music link to play it in the app, or link any music page
+
 **Planner**
 - 7-day strip, tasks with subjects and due dates, overdue list, and one tap to focus on a task
 
