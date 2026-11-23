@@ -15,6 +15,12 @@ A cozy study companion by Moki and Mochi. No account, no tracking, no paywall. E
 - 9 room backgrounds with window weather (rain, sakura petals, snow, starry loft and more)
 - Outfits (bow, glasses, scarf, headphones, beret) and room decor that grows as you study
 
+**The Pawgress Garden**
+- Unlocks after your first completed focus timer, and is locked during focus sessions
+- Each completed timer earns a flower seed and grows every planted flower by one stage. Finishing a break earns a water drop for a little extra growth.
+- Flowers never wilt. Pick blooms for your bouquet.
+- 9 flowers to discover through study milestones, collected in a flower book
+
 **Sounds**
 - Lo-fi music, white noise, ocean waves, rain and a fireplace, all generated live in the browser. Mix them with separate volumes.
 - Paste your own Spotify, YouTube, SoundCloud or Apple Music link to play it in the app, or link any music page
