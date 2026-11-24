@@ -79,6 +79,7 @@ input:focus-visible,button:focus-visible,textarea:focus-visible,[tabindex]:focus
 .pvbar span{overflow:hidden;text-overflow:ellipsis}.pvbar .buy{min-height:36px;border-radius:99px;border:1.5px solid var(--edge);font:700 13px Nunito,sans-serif;cursor:pointer;background:var(--peach);color:var(--btnink,var(--ink));display:inline-flex;align-items:center;gap:4px;padding:0 12px}.pvbar .buy svg{width:14px;height:14px}.pvbar .buy.owned{background:var(--paper)}
 .pvbar[hidden]{display:none}
 .tabs button.locked{opacity:.4;cursor:not-allowed}
+.btn.danger{color:var(--bad);border-color:var(--bad);box-shadow:0 3px 0 var(--bad)}.btn.danger.armed{background:var(--bad);color:#fff}
 .bubble{pointer-events:none}
 .sbtn{cursor:pointer;font:inherit;font-weight:700;color:var(--ink)}.sbtn svg{width:17px;height:17px}.sbtn.on{background:var(--peach);color:var(--btnink,var(--ink));border-color:var(--edge)}.gear{width:39px;height:39px;padding:0;justify-content:center;border-radius:50%;flex:none}.gear svg{width:21px;height:21px;display:block}.gear:hover svg{transform:rotate(30deg)}.gear svg{transition:transform .3s}.leaf.locked{opacity:.42;cursor:not-allowed}.leaf.new{background:var(--peach);color:var(--btnink,var(--ink));animation:leafpulse 1.6s ease-in-out infinite}@keyframes leafpulse{50%{transform:scale(1.1)}}
 .garden{position:fixed;inset:0;z-index:65;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(3px);animation:fadein .25s}
@@ -222,6 +223,9 @@ details summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:40px}
   <h3>App color</h3><div class="sw" id="appSw"></div>
   <h3>Button color</h3><div class="sw" id="btnSw"></div>
   <button class="link" id="themeReset" style="margin-top:12px">Reset colors</button>
+  <h3>Restart</h3>
+  <div class="row"><button class="btn sm ghost" id="replayWelcome" style="margin-top:0">Replay welcome</button><button class="btn sm ghost danger" id="startOver" style="margin-top:0">Start over</button></div>
+  <p class="muted" id="restartNote" style="margin:8px 0 0">Replay welcome keeps your progress. Start over erases everything on this device.</p>
 </aside>
 <aside class="sheet closed" id="sheet" aria-label="Sounds" aria-hidden="true">
   <div class="sheethead"><h2>Sounds</h2><button class="x" id="sheetX" aria-label="Close sounds">×</button></div>
@@ -696,6 +700,15 @@ function applyTheme(){const T=S.theme||{};let css='';let app=null;
 function renderSettings(){const T=S.theme||{},ap=T.app||'oat',bt=T.btn||'peach';$('#userName').value=S.userName||'';
  $('#appSw').innerHTML=APPC.map(a=>`<span class="swi"><button data-app="${a.id}" aria-pressed="${ap===a.id}" aria-label="${a.n}" style="background:linear-gradient(135deg,${(a.v||['#f8f3ec','#fffdf9','#fbe9e3'])[0]} 50%,${(a.v||['#f8f3ec','#fffdf9','#fbe9e3'])[2]} 50%)"></button><span class="swl">${a.n}</span></span>`).join('')+`<span class="swi"><label class="cust ${ap==='custom'?'on':''}" title="Pick any color">+<input type="color" id="appPick" value="${isHex(T.appC)?T.appC:'#f6cdc4'}" aria-label="Custom app color"></label><span class="swl">Custom</span></span>`;
  $('#btnSw').innerHTML=BTNC.map(b=>`<span class="swi"><button data-btnc="${b.id}" aria-pressed="${bt===b.id}" aria-label="${b.n}" style="background:${b.c||'#f6cdc4'}"></button><span class="swl">${b.n}</span></span>`).join('')+`<span class="swi"><label class="cust ${bt==='custom'?'on':''}" title="Pick any color">+<input type="color" id="btnPick" value="${isHex(T.btnC)?T.btnC:'#9db2d8'}" aria-label="Custom button color"></label><span class="swl">Custom</span></span>`}
+let overArm=0;
+function restart(full){openSettings(false);const w=document.querySelector('.welcome');if(w)w.remove();document.querySelector('.garden')?.remove();
+ if(full){SOUNDS.forEach(x=>stopSound(x.id));S=fresh();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}flush();pv=null;cv={mode:'list',deck:null};pickDay=null;offerBreak=false}
+ else{S.welcomed=false;save()}
+ tab='focus';applyTheme();renderMusic();renderAll();welcome();scrollTo(0,0)}
+$('#replayWelcome').addEventListener('click',()=>restart(false));
+$('#startOver').addEventListener('click',e=>{const b=e.currentTarget;if(overArm&&Date.now()-overArm<5000){overArm=0;b.classList.remove('armed');b.textContent='Start over';restart(true);toast('Fresh start! Welcome to Pawgress.');return}
+ overArm=Date.now();b.classList.add('armed');b.textContent='Tap again to erase';$('#restartNote').textContent='This erases your buddy, acorns, garden, planner, cards and stats on this device. Tap again within 5 seconds to confirm.';
+ setTimeout(()=>{if(overArm&&Date.now()-overArm>=4900){overArm=0;b.classList.remove('armed');b.textContent='Start over';$('#restartNote').textContent='Replay welcome keeps your progress. Start over erases everything on this device.'}},5000)});
 function openSettings(open){const sh=$('#settings');if(open)openSheet(false);sh.classList.toggle('closed',!open);sh.setAttribute('aria-hidden',!open);$('#setBtn').setAttribute('aria-expanded',open);if(open){renderSettings();setTimeout(()=>$('#setX').focus(),50)}}
 $('#setBtn').addEventListener('click',()=>openSettings($('#settings').classList.contains('closed')));
 $('#setX').addEventListener('click',()=>{openSettings(false);$('#setBtn').focus()});
