@@ -207,6 +207,13 @@ details summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:40px}
 .steam{animation:steam 3s ease-in-out infinite;opacity:.7}@keyframes steam{50%{transform:translateY(-6px);opacity:.15}}
 .tw{animation:tw 2.6s ease-in-out infinite}@keyframes tw{50%{opacity:.4}}
 .zz{animation:zz 3s ease-in-out infinite}@keyframes zz{0%{opacity:0;transform:translate(0,6px)}50%{opacity:1}100%{opacity:0;transform:translate(8px,-14px)}}
+.perspick{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:4px 0 14px}
+.perspick button{border:1.5px solid var(--line,#eadfd3);background:var(--chip);border-radius:16px;padding:10px 12px;text-align:left;cursor:pointer;color:var(--ink);font:700 14px Nunito,sans-serif}
+.perspick button span{display:block;font-weight:600;font-size:12.5px;color:var(--soft);margin-top:2px}
+.perspick button[aria-pressed=true]{border-color:var(--edge);background:var(--wash)}
+.petme{cursor:pointer;outline:none}.fbub{animation:fbub 3s ease-in-out infinite}@keyframes fbub{50%{transform:translateY(-3px)}}
+.heartup{animation:heartup 1.4s ease-out forwards;opacity:0}@keyframes heartup{0%{opacity:0;transform:translateY(10px) scale(.6)}25%{opacity:1}100%{opacity:0;transform:translateY(-34px) scale(1.1)}}
+@media(prefers-reduced-motion:reduce){.fbub,.heartup{animation:none}.heartup{opacity:1}}
 .hop{animation:hop .6s ease 3}@keyframes hop{50%{transform:translateY(-14px)}}
 .spark{animation:spark 1.6s ease-out forwards}@keyframes spark{to{transform:translateY(-40px);opacity:0}}
 .fall{animation:fall linear infinite}@keyframes fall{from{transform:translate(0,-30px)}to{transform:translate(-14px,170px)}}
@@ -330,9 +337,18 @@ function coat(br,where){const p=br.p,c=br.pc,c2=br.pc2||c;if(!p)return'';
  if(p==='dutch')return`<path d="M-62 -132H-7C-10 -110 -18 -96 -62 -88Z" fill="${c}"/><path d="M62 -132H7C10 -110 18 -96 62 -88Z" fill="${c}"/>`;
  if(p==='stripe')return`<path d="M-7 -130h14v44h-14z" fill="${c}" opacity=".85"/>`;
  return''}
-function eyesAt(xs,y,m,col,style){return xs.map(x=>{
- if(m==='sleep')return`<path d="M${x-6} ${y} q6 5 12 0" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`;
- if(m==='happy')return`<path d="M${x-6} ${y+3} q6 -7 12 0" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`;
+function eyesAt(xs,y,m,col,style){return xs.map((x,i)=>{
+ if(m==='sleep'||m==='cozy')return`<path d="M${x-6} ${y} q6 5 12 0" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`;
+ if(m==='happy'||m==='proud')return`<path d="M${x-6} ${y+3} q6 -7 12 0" fill="none" stroke="${col}" stroke-width="3" stroke-linecap="round"/>`;
+ const hl=(dx,dy,r)=>col===INK||col==='#4b3832'?`<circle cx="${x+dx}" cy="${y+dy}" r="${r}" fill="#fff"/>`:'';
+ if(style!=='ring'){
+  if(m==='excited')return`<ellipse class="eye" cx="${x}" cy="${y}" rx="4.4" ry="5.4" fill="${col}"/>${hl(1.5,-2,1.9)}${hl(-1.4,1.8,1)}`;
+  if(m==='shy')return`<ellipse class="eye" cx="${x+(i?-1:1)}" cy="${y+3}" rx="3.4" ry="3.4" fill="${col}"/>`;
+  if(m==='curious'){const big=i===1;return`<ellipse class="eye" cx="${x}" cy="${y}" rx="${big?4.6:3.5}" ry="${big?5.4:4.2}" fill="${col}"/>${hl(1.4,-1.8,big?1.8:1.3)}`}
+  if(m==='bored')return`<ellipse class="eye" cx="${x+1.6}" cy="${y+1.6}" rx="3.4" ry="2.6" fill="${col}"/><path d="M${x-5.5} ${y-.6}h11" stroke="${col}" stroke-width="2.6" stroke-linecap="round"/>`;
+  if(m==='drowsy')return`<path d="M${x-5.5} ${y+2.4}q5.5 3.2 11 0" fill="${col}" stroke="${col}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(m==='lonely')return`<ellipse class="eye" cx="${x}" cy="${y+1}" rx="3.5" ry="4" fill="${col}"/>${hl(1.2,-.8,1.4)}<path d="${i?`M${x-5} ${y-11}L${x+6} ${y-8}`:`M${x-6} ${y-8}L${x+5} ${y-11}`}" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/>`;
+  if(m==='cheerful')return`<ellipse class="eye" cx="${x}" cy="${y}" rx="3.8" ry="4.5" fill="${col}"/>${hl(1.3,-1.7,1.5)}`}
  const fy=m==='focus'?3:0;
  if(style==='ring')return`<circle cx="${x}" cy="${y}" r="5.4" fill="#fff"/><ellipse class="eye" cx="${x}" cy="${y+fy/2}" rx="3.2" ry="3.6" fill="${INK}"/>`;
  return`<ellipse class="eye" cx="${x}" cy="${y+fy}" rx="3.7" ry="${m==='focus'?3.2:4.3}" fill="${col}"/>`}).join('')}
@@ -374,7 +390,7 @@ function animal(o){const key=SP[o.sp]?o.sp:'cat',sp=SP[key],br=sp.br[o.ci]||sp.b
  if(br.p==='points'){feet=br.pc}
  const clip=`<clipPath id="${id}"><path d="${BODY}"/></clipPath>`;
  const outline=sp.special==='sheep'?'':`<path d="${BODY}" fill="none" ${s}/>`;
- const cheeks=mir(`<ellipse cx="-${cheekX}" cy="${cheekY}" rx="7.5" ry="4.6" fill="#f7a3a3" opacity=".55"/>`);
+ const cheeks=mir(m==='shy'?`<ellipse cx="-${cheekX}" cy="${cheekY}" rx="9" ry="5.4" fill="#f59a9a" opacity=".85"/><path d="M-${cheekX+4} ${cheekY-2}l-2.5 4M-${cheekX} ${cheekY-2}l-2.5 4M-${cheekX-4} ${cheekY-2}l-2.5 4" stroke="#e07f7f" stroke-width="1.4" stroke-linecap="round"/>`:`<ellipse cx="-${cheekX}" cy="${cheekY}" rx="7.5" ry="4.6" fill="#f7a3a3" opacity="${m==='excited'||m==='proud'?'.75':'.55'}"/>`);
  const eyes=eyesAt(eyeX,eyeY,m==='wave'?'happy':m,eyeCol,eyeStyle);
  if(acc.sweater)paw='#b3c2d6';if(acc.cardigan)paw='#efe4d2';if(acc.raincoat)paw='#e6cd8f';if(acc.xsweater)paw='#d9726b';if(acc.mittens)paw='#d9726b';
  const book=m==='focus';
@@ -427,8 +443,8 @@ function animal(o){const key=SP[o.sp]?o.sp:'cat',sp=SP[key],br=sp.br[o.ci]||sp.b
  const bodyWear=(acc.raincoat?`<rect x="-62" y="-66" width="124" height="70" fill="#e6cd8f"/><path d="M0 -62V4" stroke="#d6bb79" stroke-width="2.4"/><rect x="6" y="-50" width="8" height="4" rx="2" fill="#c99a5f"/><rect x="6" y="-36" width="8" height="4" rx="2" fill="#c99a5f"/><rect x="6" y="-22" width="8" height="4" rx="2" fill="#c99a5f"/>`:'')+(acc.cardigan?`<path d="M-62 -66H-4L-1 4H-62Z" fill="#efe4d2"/><path d="M62 -66H4L1 4H62Z" fill="#efe4d2"/><path d="M-4 -66L-1 4M4 -66L1 4" stroke="#e0d1b8" stroke-width="2"/><circle cx="-7" cy="-42" r="2.6" fill="#c7a98c"/><circle cx="-6" cy="-28" r="2.6" fill="#c7a98c"/><circle cx="-5" cy="-14" r="2.6" fill="#c7a98c"/>`:'')+(acc.overalls?`<path d="M-62 -30H62V4H-62Z" fill="#aebfe0"/><rect x="-22" y="-56" width="44" height="30" rx="5" fill="#aebfe0"/><rect x="-10" y="-50" width="20" height="12" rx="4" fill="#bccbe8"/><path d="M-22 -54L-38 -68M22 -54L38 -68" stroke="#aebfe0" stroke-width="7" stroke-linecap="round"/><circle cx="-17" cy="-50" r="2.6" fill="#f3d58a"/><circle cx="17" cy="-50" r="2.6" fill="#f3d58a"/>`:'');
  const sweater=acc.sweater?`<rect x="-62" y="-66" width="124" height="70" fill="#b3c2d6"/><path d="M-62 -14H62M-62 -8H62" stroke="#a2b2c8" stroke-width="2.4"/><path d="M-30 -60v46M-18 -58v44M18 -58v44M30 -60v46" stroke="#a2b2c8" stroke-width="2.4" stroke-dasharray="4 3" stroke-linecap="round"/><path d="M-40 -64q40 14 80 0" fill="none" stroke="#a2b2c8" stroke-width="6" stroke-linecap="round"/>`:'';
  const zz=m==='sleep'?`<g fill="#7d8fb8" font-family="Quicksand,sans-serif" font-weight="700"><text class="zz" x="46" y="-132" font-size="20">z</text><text class="zz" x="60" y="-152" font-size="14" style="animation-delay:1.2s">z</text></g>`:'';
- const spark=m==='happy'?[[-66,-110],[66,-104],[-54,-150],[54,-158]].map(([x,y],i)=>`<path class="spark" style="animation-delay:${i*.15}s" d="M${x} ${y}l3 7l7 3l-7 3l-3 7l-3 -7l-7 -3l7 -3z" fill="#f7d77e" ${SK(1.6)}/>`).join(''):'';
- return`<defs>${clip}</defs><ellipse cx="0" cy="3" rx="54" ry="8" fill="#4b3832" opacity=".1"/><g class="${m==='happy'?'hop':'bob'}">${back}${backAcc}${under}${ears}${body}<g clip-path="url(#${id})">${pat}${sweater}${bodyWear}${xsw}</g>${outline}${face}${over}${cheeks}${whisk}${eyes}${mouth}${neck}${feetS}${arms}${faceAcc}${head}${side}${zz}</g>${spark}`}
+ const spark=m==='happy'||m==='proud'||m==='excited'?[[-66,-110],[66,-104],[-54,-150],[54,-158]].map(([x,y],i)=>`<path class="spark" style="animation-delay:${i*.15}s" d="M${x} ${y}l3 7l7 3l-7 3l-3 7l-3 -7l-7 -3l7 -3z" fill="#f7d77e" ${SK(1.6)}/>`).join(''):'';
+ return`<defs>${clip}</defs><ellipse cx="0" cy="3" rx="54" ry="8" fill="#4b3832" opacity=".1"/><g class="${m==='happy'||m==='excited'?'hop':'bob'}"><g${m==='curious'?' transform="rotate(-7 0 -30)"':''}>${back}${backAcc}${under}${ears}${body}<g clip-path="url(#${id})">${pat}${sweater}${bodyWear}${xsw}</g>${outline}${face}${over}${cheeks}${whisk}${eyes}${mouth}${neck}${feetS}${arms}${faceAcc}${head}${side}${zz}</g></g>${spark}`}
 /* a paw reaching in, showing the breed's coat */
 function pawArm(key,bi){const sp=SP[key],br=sp.br[bi]||sp.br[0],id='pa'+(CID++);let base=br.b,tip=br.paw||null,pat=coat(br,'arm');
  if(sp.special==='panda'){base=br.pc;tip=null;pat=''}if(sp.special==='sheep'){base=br.face}if(sp.special==='owl')base=shade(br.b,-.14);
@@ -508,12 +524,19 @@ function askMood(sub){if(document.querySelector('.moodpick'))return;const w=docu
  const close=()=>{w.remove();document.removeEventListener('keydown',ek)},ek=e=>{if(e.key==='Escape')close()};
  w.addEventListener('click',e=>{if(e.target===w){close();return}const b=e.target.closest('[data-mood]');if(!b)return;const id=b.dataset.mood;close();startRun('focus',S.dur,sub);if(id!=='skip'){S.run.mood=id;save();say(MOODS.find(m=>m.id===id).reply,true)}});
  document.addEventListener('keydown',ek);document.body.appendChild(w);setTimeout(()=>w.querySelector('.mood').focus(),50)}
+const PERS={
+ bubbly:{n:'Bubbly',d:'Chatty and always cheering you on',def:'cheerful',alt:'excited',hello:'Hiii! I’m {n}! Let’s have the best study day ever!',idle:['You’re doing amazing, you know that?','Yay, study time!','I believe in you so much!'],pet:['Hehe, that tickles!','Again, again!','Best day ever!'],petShy:false},
+ shy:{n:'Shy',d:'Quiet, sweet and a little blushy',def:'shy',alt:'cozy',hello:'Oh! H-hi… I’m {n}. I’m really happy you’re here.',idle:['…I like studying with you.','*peeks at your notes*','It’s nice and quiet today.'],pet:['Oh! …thank you.','*blushes*','Eep… that’s nice.'],petShy:true},
+ sleepy:{n:'Sleepy',d:'Cozy, calm and a bit yawny',def:'cozy',alt:'drowsy',hello:'*yawn* Hi, I’m {n}. Let’s study at a cozy pace.',idle:['*stretches* Mm, comfy.','Is it nap o’clock? Kidding. Mostly.','Slow and steady is the best way.'],pet:['Mmm… so cozy.','*happy sigh*','Five more pats, please.'],petShy:false},
+ curious:{n:'Curious',d:'Full of questions and wonder',def:'curious',alt:'cheerful',hello:'Hi, I’m {n}! What are we learning today?',idle:['What’s on your list today?','Did you know octopuses have three hearts?','I wonder what we’ll learn next.'],pet:['Ooh! What was that for?','Hehe, do that again?','I like that!'],petShy:false}};
+const FEEL={cheerful:{n:'cheerful',lines:['What a nice day to learn things!']},proud:{n:'proud',lines:['We did so good! I’m proud of us.','Look at us go!']},excited:{n:'excited',lines:['What a big study day!','We’re on a roll!']},shy:{n:'shy',lines:['I’m glad you’re here.']},curious:{n:'curious',lines:['Ooh, what are we learning?','I wonder what’s next on your list.']},bored:{n:'a bit bored',lines:['Wanna study something? Even 15 minutes?','I’m a little bored… quiz me?']},lonely:{n:'lonely',lines:['I missed you.']},cozy:{n:'cozy',lines:['So cozy in here.','Perfect weather for studying.']},drowsy:{n:'drowsy',lines:['*yawn* Still here, promise.','Mm, maybe some tea?']},happy:{n:'happy',lines:[]},focus:{n:'focused',lines:[]},sleep:{n:'asleep',lines:[]},idle:{n:'calm',lines:[]}};
+const pers=()=>PERS[S.pers]||PERS.bubbly;
 const LINES={idle:['Ready when you are.','Pick a length and I’ll grab my book.','Shall we study together?','Your planner is looking good.'],focus:['Reading right beside you.','You’ve got this.','One page at a time.','I’m right here.','Nice and steady.'],pause:'Taking a breather? Good idea.',back:'Welcome back! I kept our spot.',sleep:'Zzz… press Start and I’ll wake up.',brk:'Stretch, sip some water, look outside.'};
 const KEY='studybuddy.v1';
-const fresh=()=>({v:2,species:'cat',ci:0,name:'Mochi',acorns:4,owned:[],hidden:[],bg:'peach',bgs:['peach','rain'],sessions:[],tasks:[],decks:[],tests:[],run:null,dur:25,updated:0,welcomed:false,pos:{},snd:{vol:{}},music:'',userName:'',theme:{},garden:{open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},advent:{year:0,opened:[]},exams:[],moodAsk:true});
-const norm=s=>{const o=Object.assign(fresh(),s||{});if(!SP[o.species])o.species='cat';for(const k of['owned','hidden','bgs','sessions','tasks','decks','tests'])if(!Array.isArray(o[k]))o[k]=fresh()[k];if(!o.snd||typeof o.snd!=='object')o.snd={vol:{}};if(!o.snd.vol||typeof o.snd.vol!=='object')o.snd.vol={};if(typeof o.music!=='string')o.music='';if(typeof o.userName!=='string')o.userName='';if(!o.theme||typeof o.theme!=='object')o.theme={};if(!Array.isArray(o.exams))o.exams=[];if(typeof o.moodAsk!=='boolean')o.moodAsk=true;if(!o.advent||typeof o.advent!=='object'||!Array.isArray(o.advent.opened))o.advent={year:0,opened:[]};{const d={open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},g=o.garden&&typeof o.garden==='object'?o.garden:{};o.garden=Object.assign(d,g);for(const k of['seeds','found'])if(!Array.isArray(o.garden[k]))o.garden[k]=[];if(!Array.isArray(o.garden.plots)||o.garden.plots.length!==12)o.garden.plots=Array(12).fill(null);if(!o.garden.picked||typeof o.garden.picked!=='object')o.garden.picked={};o.garden.water=Math.max(0,Math.min(5,+o.garden.water||0))}if(!o.pos||typeof o.pos!=='object'||Array.isArray(o.pos))o.pos={};if(!o.bgs.includes('peach'))o.bgs.push('peach','rain');return o};
+const fresh=()=>({v:2,species:'cat',ci:0,name:'Mochi',acorns:4,owned:[],hidden:[],bg:'peach',bgs:['peach','rain'],sessions:[],tasks:[],decks:[],tests:[],run:null,dur:25,updated:0,welcomed:false,pos:{},snd:{vol:{}},music:'',userName:'',theme:{},garden:{open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},advent:{year:0,opened:[]},exams:[],moodAsk:true,pers:'bubbly',lastSeen:0});
+const norm=s=>{const o=Object.assign(fresh(),s||{});if(!PERS[o.pers])o.pers='bubbly';if(typeof o.lastSeen!=='number')o.lastSeen=0;if(!SP[o.species])o.species='cat';for(const k of['owned','hidden','bgs','sessions','tasks','decks','tests'])if(!Array.isArray(o[k]))o[k]=fresh()[k];if(!o.snd||typeof o.snd!=='object')o.snd={vol:{}};if(!o.snd.vol||typeof o.snd.vol!=='object')o.snd.vol={};if(typeof o.music!=='string')o.music='';if(typeof o.userName!=='string')o.userName='';if(!o.theme||typeof o.theme!=='object')o.theme={};if(!Array.isArray(o.exams))o.exams=[];if(typeof o.moodAsk!=='boolean')o.moodAsk=true;if(!o.advent||typeof o.advent!=='object'||!Array.isArray(o.advent.opened))o.advent={year:0,opened:[]};{const d={open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},g=o.garden&&typeof o.garden==='object'?o.garden:{};o.garden=Object.assign(d,g);for(const k of['seeds','found'])if(!Array.isArray(o.garden[k]))o.garden[k]=[];if(!Array.isArray(o.garden.plots)||o.garden.plots.length!==12)o.garden.plots=Array(12).fill(null);if(!o.garden.picked||typeof o.garden.picked!=='object')o.garden.picked={};o.garden.water=Math.max(0,Math.min(5,+o.garden.water||0))}if(!o.pos||typeof o.pos!=='object'||Array.isArray(o.pos))o.pos={};if(!o.bgs.includes('peach'))o.bgs.push('peach','rain');return o};
 let S=fresh();try{const r=localStorage.getItem(KEY);if(r)S=norm(JSON.parse(r))}catch(e){}
-let drag=null,pv=null,tab='focus',ref=null,writing=false,pending=false,pushT=0,mood='',lineAt=0,happyUntil=0,audio=null,lastNight=null,offerBreak=false,pickDay=null,cv={mode:'list',deck:null},T=null,F=null,delArm=null;
+let feelOv=null,petUntil=0,petAt=0,lastAct=Date.now();let drag=null,pv=null,tab='focus',ref=null,writing=false,pending=false,pushT=0,mood='',lineAt=0,happyUntil=0,audio=null,lastNight=null,offerBreak=false,pickDay=null,cv={mode:'list',deck:null},T=null,F=null,delArm=null;
 const now=()=>Date.now();
 function save(){if(S.garden&&S.garden.open&&typeof checkFlowers==='function')checkFlowers();S.updated=now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(pushT);pushT=setTimeout(flush,900)}
 async function flush(){if(!ref)return;if(writing){pending=true;return}writing=true;try{await ref.set({state:JSON.parse(JSON.stringify(S))})}catch(e){if(e&&e.code==='invalid_argument')ref=null;if(e&&e.code==='quota_exceeded')toast('Account storage is full')}writing=false;if(pending){pending=false;flush()}}
@@ -667,7 +690,9 @@ function scene(){const night=isNight(),st=stats();let wall='',floor='',back='',f
  if(has('xstocking'))wall+=D('xstocking',xStockingArt());
  if(has('xorn')&&!has('xtree'))wall+=D('xorn',xOrnArt());
  if(has('xtree'))floor+=D('xtree',xTreeArt(has('xorn')));
- const pet=`<g transform="translate(435 288) scale(.82)">${animal({sp:S.species,ci:S.ci,mood,acc:accNow()})}</g>`;
+ const hearts=now()<petUntil?`<g transform="translate(435 160)" aria-hidden="true">${[[-26,0,0],[0,-14,.15],[26,-2,.3]].map(([x,y,d])=>`<g transform="translate(${x} ${y})"><path class="heartup" style="animation-delay:${d}s" d="M0 6c-7 -5 -10 -9 -8 -13c2 -4 7 -4 8 0c1 -4 6 -4 8 0c2 4 -1 8 -8 13z" fill="#f3a3a0" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/></g>`).join('')}</g>`:'';
+ const pet=`<g transform="translate(435 288) scale(.82)"><g class="petme" role="button" tabindex="0" aria-label="Pet ${esc(buddyName())}">${animal({sp:S.species,ci:S.ci,mood,acc:accNow()})}</g></g>${mood==='focus'||mood==='idle'||mood==='sleep'?'':feelBubble(mood)}${hearts}`;
+ {const f=FEEL[mood]||FEEL.idle,sb=$('#sub');if(sb)sb.textContent=`${buddyName()} · feeling ${f.n}`}
  const sv=$('#scene');sv.innerHTML=roomSVG(bg().id,{wall,floor,back,pet,front,glow:has('lamp')&&night},night);const small=tab!=='focus'&&tab!=='style'&&innerWidth<=900;$('#room').classList.toggle('mini',small);$('#room').classList.toggle('canmove',!locked());sv.setAttribute('preserveAspectRatio',small?'xMidYMax slice':'xMidYMid meet')}
 
 /* ---------- Focus ---------- */
@@ -748,14 +773,40 @@ function vStyle(){const P=SP[S.species];const shop=t=>`<div class="tiles">${ITEM
  return `<h3 style="margin-top:0">Study buddy</h3><div class="pick">${Object.keys(SP).map(k=>`<button data-act="species" data-v="${k}" aria-pressed="${S.species===k}">${mini(k,k===S.species?S.ci:0)}<span>${SP[k].label}</span></button>`).join('')}</div>
  <h3>Breed</h3><div class="ringwrap">${ring(S.species,S.ci,true)}<p class="breedname">${esc((P.br[S.ci]||P.br[0]).n)}</p><p class="muted center" style="margin:0">Tap a paw to choose a coat.</p></div>
  <label for="nm">Name</label><input id="nm" maxlength="20" value="${esc(S.name)}">
+ <label>Personality</label><div class="perspick">${Object.keys(PERS).map(k=>`<button data-act="pers" data-id="${k}" aria-pressed="${S.pers===k}"><b>${PERS[k].n}</b><span>${PERS[k].d}</span></button>`).join('')}</div>
  <h3>Backgrounds</h3><div class="bgtiles">${BGS.filter(b=>!b.adv||S.bgs.includes(b.id)).map(b=>{const own=S.bgs.includes(b.id),sel=S.bg===b.id,on=pv&&pv.k==='bg'&&pv.id===b.id;return `<div class="tile${sel?' sel':''}${own?'':' shopt'}${on?' pv':''}" ${own?'':`data-act="preview" data-k="bg" data-id="${b.id}" role="button" tabindex="0" aria-label="Preview ${esc(b.n)}"`}><svg class="bgprev" viewBox="0 0 600 360" aria-hidden="true">${roomSVG(b.id,null,false)}</svg><div class="bgrow"><b>${b.n}${b.adv?' <span class="tag">Advent</span>':''}</b><span class="price">${b.p?b.p+' acorns':'free'}</span></div><div class="dotsrow" aria-hidden="true">${b.dots.map(c=>`<i style="background:${c}"></i>`).join('')}</div>${own?`<button class="buy ${sel?'owned':''}" data-act="useBg" data-id="${b.id}">${sel?'In use':'Use'}</button>`:buyBtn('buyBg',b.id,b.p)}</div>`}).join('')}</div>
  <h3>Outfits</h3>${shop('wear')}<h3>Room decor</h3><p class="muted" style="margin:-4px 0 10px">Drag furniture around your room to move it. <button class="link" data-act="resetPos" style="font-size:14px">Reset layout</button></p>${shop('decor')}`}
 
 /* ---------- core ---------- */
-function computeMood(){if(now()<happyUntil)return'happy';if(S.run)return S.run.kind==='break'?'idle':S.run.paused!=null?'idle':'focus';return isNight()?'sleep':'idle'}
+function computeMood(){if(feelOv&&now()<feelOv.until)return feelOv.f;if(now()<happyUntil)return'happy';if(S.run)return S.run.kind==='break'?'cozy':S.run.paused!=null?'idle':'focus';return isNight()?'sleep':feeling()}
+function feeling(){const P=pers(),h=new Date().getHours(),st=stats(),last=S.sessions[S.sessions.length-1],since=last?now()-last.at:1e13,slot=Math.floor(now()/600000)%3;
+ if(since<20*60000)return'proud';
+ if(st.today>=60&&since<2*3600000)return'excited';
+ if(tab==='cards')return'curious';
+ if(!st.today&&h>=15&&now()-lastAct>3*60000)return'bored';
+ if(S.pers==='sleepy'&&h>=13&&h<16)return'drowsy';
+ if(['rain','snow','xmas','forest'].includes(S.bg)||h>=17)return slot===0?P.def:'cozy';
+ if(h>=6&&h<11)return S.pers==='sleepy'?'drowsy':S.pers==='shy'&&slot?'shy':'cheerful';
+ return slot===2?P.alt:P.def}
+function feelBubble(m){const I=INK,ic={happy:`<path d="M0 6c-7 -5 -10 -9 -8 -13c2 -4 7 -4 8 0c1 -4 6 -4 8 0c2 4 -1 8 -8 13z" fill="#f3a3a0" stroke="${I}" stroke-width="1.6" stroke-linejoin="round"/>`,
+ proud:`<path d="M0 -9l2.6 6.4l6.4 2.6l-6.4 2.6l-2.6 6.4l-2.6 -6.4l-6.4 -2.6l6.4 -2.6z" fill="#f7d77e" stroke="${I}" stroke-width="1.5" stroke-linejoin="round"/>`,
+ excited:`<path d="M-3 -8l2 5l5 2l-5 2l-2 5l-2 -5l-5 -2l5 -2z" fill="#f7d77e" stroke="${I}" stroke-width="1.4" stroke-linejoin="round"/><path d="M6 1l1.3 3.2l3.2 1.3l-3.2 1.3l-1.3 3.2l-1.3 -3.2l-3.2 -1.3l3.2 -1.3z" fill="#f3b6ad" stroke="${I}" stroke-width="1.2" stroke-linejoin="round"/>`,
+ cheerful:`<circle r="5" fill="#f8d87e" stroke="${I}" stroke-width="1.5"/><path d="M0 -10v2.5M0 7.5v2.5M-10 0h2.5M7.5 0h2.5M-7 -7l1.8 1.8M5.2 5.2l1.8 1.8M7 -7l-1.8 1.8M-5.2 5.2l-1.8 1.8" stroke="${I}" stroke-width="1.5" stroke-linecap="round"/>`,
+ cozy:`<path d="M-7 -3h11v6a5 5 0 0 1 -5 5h-1a5 5 0 0 1 -5 -5z" fill="#f3c4bb" stroke="${I}" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 -1h1.5a2.6 2.6 0 0 1 0 5.2h-1.5" fill="none" stroke="${I}" stroke-width="1.5"/><path d="M-3 -6q-2 -2.5 0 -5M1 -6q-2 -2.5 0 -5" fill="none" stroke="${I}" stroke-width="1.3" stroke-linecap="round"/>`,
+ curious:`<text y="6" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="18" fill="${I}">?</text>`,
+ bored:`<g fill="${I}"><circle cx="-6" cy="1" r="1.8"/><circle cy="1" r="1.8"/><circle cx="6" cy="1" r="1.8"/></g>`,
+ lonely:`<path d="M-8 2a4.5 4.5 0 0 1 1 -8.6a6 6 0 0 1 11 1a4 4 0 0 1 1 7.6z" fill="#c9d6ea" stroke="${I}" stroke-width="1.5" stroke-linejoin="round"/><path d="M-2 5q-1.4 2.4 0 3.6q1.4 -1.2 0 -3.6z" fill="#8fb0dc" stroke="${I}" stroke-width="1"/>`,
+ drowsy:`<text x="-2" y="5" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="15" fill="#7d8fb8">z</text><text x="5" y="-2" text-anchor="middle" font-family="Quicksand,sans-serif" font-weight="700" font-size="10" fill="#7d8fb8">z</text>`,
+ shy:`<path d="M0 5c-5.5 -4 -8 -7 -6.3 -10.3c1.6 -3 5.3 -3 6.3 0c1 -3 4.7 -3 6.3 0c1.7 3.3 -.8 6.3 -6.3 10.3z" fill="#fbd3d0" stroke="${I}" stroke-width="1.5" stroke-linejoin="round"/>`}[m];
+ if(!ic)return'';return`<g transform="translate(512 136) scale(1.25)" aria-hidden="true"><g class="fbub"><circle cx="-14" cy="20" r="3" fill="#fffaf3" stroke="${I}" stroke-width="1.5"/><circle cx="-7" cy="13" r="4.4" fill="#fffaf3" stroke="${I}" stroke-width="1.5"/><circle r="15" fill="#fffaf3" stroke="${I}" stroke-width="2"/>${ic}</g></g>`}
+function petBuddy(){if(now()-petAt<700)return;petAt=now();petUntil=now()+1600;const P=pers();
+ if(S.run&&S.run.kind==='focus'&&S.run.paused==null){say('Hehe, thank you! Back to focusing.',true);scene();return}
+ if(P.petShy)feelOv={f:'shy',until:now()+3000};else happyUntil=now()+2400;
+ say(P.pet[Math.floor(Math.random()*P.pet.length)],true);mood=computeMood();scene()}
+function greet(){const P=pers();return P.hello.replace('{n}',buddyName())}
 function say(t,force){lineAt=now();const n=(S.userName||'').trim();if(n&&t&&!t.includes(n)&&(force||Math.random()<.4)){const m=t.match(/^(.*?)([.!?…]+)$/);if(m&&!/[.!?]\s*$/.test(m[1].slice(-1)))t=`${m[1]}, ${n}${m[2]}`}$('#bubble').textContent=t}
 function renderView(){const lk=locked();document.querySelectorAll('.tabs button').forEach(b=>{b.setAttribute('aria-selected',b.dataset.tab===tab);if(b.dataset.tab==='style'){b.classList.toggle('locked',lk);b.setAttribute('aria-disabled',lk);b.title=lk?'Customize opens when your focus session ends':''}});$('.grid').classList.toggle('styling',tab==='style');$('#view').innerHTML={focus:vFocus,plan:vPlan,cards:vCards,stats:vStats,style:vStyle}[tab]()}
-function renderAll(){mood=computeMood();scene();$('#sub').textContent=`${buddyName()} · ${bg().n}`;$('#acorns').textContent=S.acorns;$('#streakPill').textContent=`${stats().streak} day streak`;renderPv();renderGardenBtn();renderAdventBtn();renderView()}
+function renderAll(){mood=computeMood();scene();$('#acorns').textContent=S.acorns;$('#streakPill').textContent=`${stats().streak} day streak`;renderPv();renderGardenBtn();renderAdventBtn();renderView()}
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
 function chime(){try{if(!audio)return;const t=audio.currentTime;[523.25,659.25,783.99].forEach((f,i)=>{const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.18);g.gain.linearRampToValueAtTime(.16,t+i*.18+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.18+1.2);o.connect(g).connect(audio.destination);o.start(t+i*.18);o.stop(t+i*.18+1.3)})}catch(e){}}
 function earn(n,msg){if(n<=0)return;S.acorns+=n;happyUntil=now()+3200;toast(`+${n} acorn${n>1?'s':''}${msg?' · '+msg:''}`)}
@@ -1067,6 +1118,7 @@ $('#view').addEventListener('click',e=>{const t=e.target.closest('[data-act]');i
  case'resetPos':S.pos={};save();renderAll();say('Back to the original spots!');break;
  case'buy':{const it=ITEMS.find(i=>i.id===id);if(it&&S.acorns>=it.p&&!S.owned.includes(id)){S.acorns-=it.p;S.owned.push(id);S.hidden=S.hidden.filter(x=>x!==id);pv=null;happyUntil=now()+3200;say(it.t==='decor'?`Ooh, a ${it.n.toLowerCase()}! Drag it anywhere you like.`:`Ooh, a ${it.n.toLowerCase()}! Thank you.`);save();renderAll()}break}
  case'toggleItem':{const on=S.hidden.includes(id);S.hidden=on?S.hidden.filter(x=>x!==id):[...S.hidden,id];}save();renderAll();break;
+ case'pers':{if(PERS[id]){S.pers=id;save();mood=computeMood();renderAll();say(greet(),true)}break}
  case'buyBg':{const b=BGS.find(x=>x.id===id);if(b&&S.acorns>=b.p&&!S.bgs.includes(id)){S.acorns-=b.p;S.bgs.push(id);S.bg=id;pv=null;happyUntil=now()+3200;say('A new view! I love it.');save();renderAll()}break}
  case'useBg':S.bg=id;pv=null;save();renderAll();break;
  }});
@@ -1074,6 +1126,7 @@ $('#view').addEventListener('click',e=>{const t=e.target.closest('[data-act]');i
  sv.addEventListener('pointerdown',e=>{const g=e.target.closest('[data-drag]');if(!g||locked())return;const p=toSvg(e);if(!p)return;e.preventDefault();const id=g.dataset.drag,o=S.pos[id]||{x:0,y:0};drag={id,g,sx:p.x,sy:p.y,ox:o.x,oy:o.y,c:null};try{sv.setPointerCapture(e.pointerId)}catch(x){}g.classList.add('dragging')});
  sv.addEventListener('pointermove',e=>{if(!drag)return;const p=toSvg(e);if(!p)return;if(!drag.c&&Math.hypot(p.x-drag.sx,p.y-drag.sy)<3)return;drag.c=clampPos(drag.id,drag.ox+p.x-drag.sx,drag.oy+p.y-drag.sy);drag.g.setAttribute('transform',`translate(${drag.c.x} ${drag.c.y})`)});
  const end=()=>{if(!drag)return;drag.g.classList.remove('dragging');const d=drag;drag=null;if(d.c){S.pos[d.id]=d.c;save();say(['Perfect spot!','Ooh, I like it there.','Very cozy.'][Math.floor(Math.random()*3)])}};
+ sv.addEventListener('click',e=>{if(!drag&&e.target.closest('.petme'))petBuddy()});sv.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.closest&&e.target.closest('.petme')){e.preventDefault();petBuddy()}});
  sv.addEventListener('pointerup',end);sv.addEventListener('pointercancel',end);sv.addEventListener('lostpointercapture',end)}
 $('#pvbar').addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;$('#view').dispatchEvent(new CustomEvent('pvact',{detail:t}))});
 $('#view').addEventListener('pvact',e=>{const t=e.detail,a=t.dataset.act,id=t.dataset.id;if(a==='endPreview'){pv=null;renderAll();return}const fake=document.createElement('button');fake.dataset.act=a;fake.dataset.id=id;fake.style.display='none';$('#view').appendChild(fake);fake.click();fake.remove()});
@@ -1094,24 +1147,27 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 addEventListener('resize',()=>{const small=tab!=='focus'&&tab!=='style'&&innerWidth<=900;if(small!==$('#room').classList.contains('mini'))scene()});
 
 /* ---------- welcome ---------- */
-function welcome(){if(S.welcomed)return;let step=1,sp=S.species;const w=document.createElement('div');w.className='welcome';w.setAttribute('role','dialog');w.setAttribute('aria-label','Welcome to Pawgress');
+function welcome(){if(S.welcomed)return;let step=1,sp=S.species,pr=PERS[S.pers]?S.pers:'bubbly';const w=document.createElement('div');w.className='welcome';w.setAttribute('role','dialog');w.setAttribute('aria-label','Welcome to Pawgress');
  const paws=`<div class="paws">${[[6,12,-20],[14,70,15],[84,18,25],[90,64,-10],[46,88,5],[70,40,30]].map(([x,y,r])=>`<span style="position:absolute;left:${x}%;top:${y}%;transform:rotate(${r}deg)">${PAW}</span>`).join('')}</div>`;
  const draw=()=>{w.innerHTML=paws+(step===1?`<div class="wcard"><svg class="hero" viewBox="0 0 360 360" aria-hidden="true"><defs><clipPath id="heroclip"><circle cx="180" cy="180" r="176"/></clipPath></defs><g clip-path="url(#heroclip)"><circle cx="180" cy="180" r="104" class="wash"/>${[['cat',0],['dog',1],['cat',1],['dog',0],['cat',2],['dog',6],['cat',3],['dog',3]].map(([k,i],n)=>`<g transform="translate(180 180) rotate(${n*45+22.5}) translate(0 -128)">${pawArm(k,i)}</g>`).join('')}</g><g class="floaty"><g transform="translate(138 246) scale(.72)">${animal({sp:'cat',ci:0,mood:'happy'})}</g><g transform="translate(224 246) scale(.72)">${animal({sp:'dog',ci:0,mood:'idle'})}</g><path d="M181 140c-5 -8 -16 -5 -14 5c2 7 14 14 14 14s12 -7 14 -14c2 -10 -9 -13 -14 -5z" fill="#f3a89a" stroke="#4b3832" stroke-width="2.4" stroke-linejoin="round"/></g></svg><h2>Welcome to <em>Pawgress</em></h2><p class="by">by Moki and Mochi</p><p class="muted" style="max-width:380px;margin:16px auto 0">A cozy study companion. Focus together, plan your week, practice with study cards, and decorate your buddy’s room as you go.</p><button class="btn" data-w="next" style="max-width:320px;margin:26px auto 0">Get started</button></div>`
-  :`<div class="wcard"><h2 style="font-size:clamp(30px,5vw,42px)">Choose your study buddy</h2><p class="by" style="margin-bottom:18px">You can change this anytime in Customize.</p><div class="pick">${Object.keys(SP).map(k=>`<button data-w="sp" data-v="${k}" aria-pressed="${sp===k}">${mini(k,0)}${SP[k].label}</button>`).join('')}</div><label for="wName" style="text-align:left">Name your buddy</label><input id="wName" maxlength="20" value="${esc(SP[sp].name)}"><button class="btn" data-w="done">Enter Pawgress</button></div>`)};
+  :`<div class="wcard"><h2 style="font-size:clamp(30px,5vw,42px)">Choose your study buddy</h2><p class="by" style="margin-bottom:18px">You can change this anytime in Customize.</p><div class="pick">${Object.keys(SP).map(k=>`<button data-w="sp" data-v="${k}" aria-pressed="${sp===k}">${mini(k,0)}${SP[k].label}</button>`).join('')}</div><label for="wName" style="text-align:left">Name your buddy</label><input id="wName" maxlength="20" value="${esc(SP[sp].name)}"><label style="text-align:left">Pick a personality</label><div class="perspick">${Object.keys(PERS).map(k=>`<button data-w="pers" data-v="${k}" aria-pressed="${pr===k}"><b>${PERS[k].n}</b><span>${PERS[k].d}</span></button>`).join('')}</div><button class="btn" data-w="done">Enter Pawgress</button></div>`)};
  w.addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;const k=b.dataset.w;
-  if(k==='next'){step=2;draw()}else if(k==='sp'){const cur=w.querySelector('#wName').value.trim();const was=SP[sp].name;sp=b.dataset.v;draw();w.querySelector('#wName').value=(!cur||cur===was)?SP[sp].name:cur}
-  else if(k==='done'){S.species=sp;S.ci=0;S.name=w.querySelector('#wName').value.trim().slice(0,20)||SP[sp].name;S.welcomed=true;save();renderAll();say(`Hi! I’m ${buddyName()}. Let’s study together.`);w.classList.add('out');setTimeout(()=>w.remove(),650)}});
+  if(k==='next'){step=2;draw()}else if(k==='pers'){pr=b.dataset.v;w.querySelectorAll('[data-w=pers]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===pr))}else if(k==='sp'){const cur=w.querySelector('#wName').value.trim();const was=SP[sp].name;sp=b.dataset.v;draw();w.querySelector('#wName').value=(!cur||cur===was)?SP[sp].name:cur}
+  else if(k==='done'){S.species=sp;S.pers=pr;S.ci=0;S.name=w.querySelector('#wName').value.trim().slice(0,20)||SP[sp].name;S.welcomed=true;S.lastSeen=now();save();renderAll();say(greet(),true);w.classList.add('out');setTimeout(()=>w.remove(),650)}});
  draw();document.body.appendChild(w)}
 
 /* ---------- loop ---------- */
 function tick(){const r=S.run;if(r&&r.paused==null&&remaining()<=0){finish(true);return}
  const c=$('#clock');if(c&&r){const left=remaining();c.textContent=fmt(left);const p=$('#prog');if(p)p.style.width=(100-left/(r.dur*60000)*100).toFixed(1)+'%'}
  const m=computeMood(),n=isNight();if(!drag&&(m!==mood||n!==lastNight)){lastNight=n;mood=m;scene()}
- if(now()-lineAt>90000){const md=S.run&&S.run.mood&&MOODS.find(x=>x.id===S.run.mood),ex=nextExam(),exL=ex&&daysUntil(ex.date)<=14?[`${ex.name} is ${examWhen(daysUntil(ex.date))}. We’ve got this!`]:[];const L=m==='focus'?(md?[...md.lines,...LINES.focus.slice(0,2)]:LINES.focus):m==='sleep'?[LINES.sleep]:[...LINES.idle,...exL,...exL];say(L[Math.floor(Math.random()*L.length)])}}
+ if(now()-lineAt>90000){const md=S.run&&S.run.mood&&MOODS.find(x=>x.id===S.run.mood),ex=nextExam(),exL=ex&&daysUntil(ex.date)<=14?[`${ex.name} is ${examWhen(daysUntil(ex.date))}. We’ve got this!`]:[];const L=m==='focus'?(md?[...md.lines,...LINES.focus.slice(0,2)]:LINES.focus):m==='sleep'?[LINES.sleep]:[...pers().idle,...pers().idle,...((FEEL[m]||FEEL.idle).lines),...((FEEL[m]||FEEL.idle).lines),LINES.idle[0],...exL,...exL];say(L[Math.floor(Math.random()*L.length)])}}
 setInterval(tick,500);
 if(S.run&&S.run.paused==null&&remaining()<=0)finish(true);
 advRegrant();applyTheme();renderMusic();renderAll();{const ex=nextExam(),k=ex&&daysUntil(ex.date);if(!S.run&&ex&&k<=7)setTimeout(()=>say(k===0?`${ex.name} is today. You’ve totally got this!`:`${ex.name} is ${examWhen(k)}. Let’s get ready together!`,true),4000)}
-say(S.run?LINES.focus[1]:isNight()?LINES.sleep:(S.userName?`Hi ${S.userName}! I’m ${buddyName()}. Ready when you are.`:`Hi! I’m ${buddyName()}. Ready when you are.`));welcome();
+{const gap=S.lastSeen?now()-S.lastSeen:0;if(S.welcomed&&!S.run&&!isNight()&&gap>36*3600000){feelOv={f:'lonely',until:now()+2600};mood=computeMood();scene();say('…oh?',true);setTimeout(()=>{feelOv=null;happyUntil=now()+3600;mood=computeMood();scene();say(S.userName?`${S.userName}! You’re back! I missed you so much.`:'You’re back! I missed you so much.',true)},2600)}
+ else say(S.run?LINES.focus[1]:isNight()?LINES.sleep:(S.userName&&S.pers==='bubbly'?greet().replace('Hiii!',`Hiii ${S.userName}!`):greet()))}
+{const touch=()=>{S.lastSeen=now();try{const raw=localStorage.getItem(KEY);if(!raw)return;const o=JSON.parse(raw);o.lastSeen=S.lastSeen;localStorage.setItem(KEY,JSON.stringify(o))}catch(x){}};touch();addEventListener('pagehide',touch);document.addEventListener('visibilitychange',()=>{if(document.hidden)touch()})}
+['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},{passive:true}));welcome();
 
 /* ---------- account sync ---------- */
 (async()=>{try{if(!window.claude||!window.claude.use)return;const db=await window.claude.use('db'),u=await window.claude.use('user');if(!db||!u)return;const id=await u.id();if(!id)return;
