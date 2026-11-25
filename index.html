@@ -371,17 +371,20 @@ function animal(o){const key=SP[o.sp]?o.sp:'cat',sp=SP[key],br=sp.br[o.ci]||sp.b
  if(acc.hearts)faceAcc+=`<g stroke="#c98f7c" stroke-width="2.6"><circle cx="${eyeX[0]}" cy="${eyeY}" r="11.5" fill="rgba(92,70,78,.62)"/><circle cx="${eyeX[1]}" cy="${eyeY}" r="11.5" fill="rgba(92,70,78,.62)"/></g><path d="M${eyeX[0]+11.5} ${eyeY-1}q${(eyeX[1]-eyeX[0]-23)/2} -5 ${eyeX[1]-eyeX[0]-23} 0" fill="none" stroke="#c98f7c" stroke-width="2.6" stroke-linecap="round"/><path d="M${eyeX[0]-5} ${eyeY-4}l4 -4M${eyeX[1]-5} ${eyeY-4}l4 -4" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/>`;
  if(acc.beret)head+=`<g transform="rotate(-9 6 ${ht})"><ellipse cx="6" cy="${ht+1}" rx="36" ry="12" fill="#5c5a62" ${s2}/><ellipse cx="6" cy="${ht-3}" rx="27" ry="8" fill="#6e6c75"/><circle cx="6" cy="${ht-13}" r="4.5" fill="#5c5a62" ${s3}/></g>`;
  if(acc.beanie)head+=`<path d="M-40 ${ht+14}Q-42 ${ht-30} 0 ${ht-30}Q42 ${ht-30} 40 ${ht+14}Z" fill="#e6d8c0" ${s2}/><rect x="-43" y="${ht+4}" width="86" height="15" rx="7.5" fill="#eee3cf" ${s2}/>${[-30,-18,-6,6,18,30].map(x=>`<path d="M${x} ${ht+7}v9" stroke="#d9c8ab" stroke-width="2.4" stroke-linecap="round"/>`).join('')}<circle cx="0" cy="${ht-34}" r="10" fill="#f6f0e4" ${s2}/>`;
- if(acc.strawberry)head+=`<path d="M-46 ${ht+16}Q0 ${ht-30} 46 ${ht+16}" fill="none" stroke="${INK}" stroke-width="15" stroke-linecap="round"/><path d="M-46 ${ht+16}Q0 ${ht-30} 46 ${ht+16}" fill="none" stroke="#f3ebdd" stroke-width="10.5" stroke-linecap="round"/><path d="M-30 ${ht+1}l4 4M-16 ${ht-5}l4 4M0 ${ht-7}l4 4M16 ${ht-5}l4 4M30 ${ht+1}l4 4" stroke="#e0d3bd" stroke-width="2" stroke-linecap="round"/>`;
+ if(acc.knitband)head+=`<path d="M-46 ${ht+16}Q0 ${ht-30} 46 ${ht+16}" fill="none" stroke="${INK}" stroke-width="15" stroke-linecap="round"/><path d="M-46 ${ht+16}Q0 ${ht-30} 46 ${ht+16}" fill="none" stroke="#f3ebdd" stroke-width="10.5" stroke-linecap="round"/><path d="M-30 ${ht+1}l4 4M-16 ${ht-5}l4 4M0 ${ht-7}l4 4M16 ${ht-5}l4 4M30 ${ht+1}l4 4" stroke="#e0d3bd" stroke-width="2" stroke-linecap="round"/>`;
  if(acc.crown)head+=`<path d="M-34 ${ht+8}Q0 ${ht-10} 34 ${ht+8}" fill="none" stroke="#9fc48f" stroke-width="2.6" stroke-linecap="round"/>`+[[-30,5,'#f6c7d2'],[-14,-2,'#fffaf3'],[2,-4,'#d9cdef'],[18,-1,'#fffaf3'],[32,6,'#f6c7d2']].map(([x,y,c],k)=>`<ellipse cx="${x+7}" cy="${ht+y+3}" rx="3.6" ry="2" fill="#a9cf98" transform="rotate(20 ${x+7} ${ht+y+3})"/>`+`<g transform="translate(${x} ${ht+y}) scale(.78)">${[0,1,2,3,4].map(i=>`<circle cx="${(Math.cos(i*1.257-1.57)*4.2).toFixed(1)}" cy="${(Math.sin(i*1.257-1.57)*4.2).toFixed(1)}" r="3.5" fill="${c}"/>`).join('')}<circle r="2.2" fill="#f3d58a"/></g>`).join('');
  if(acc.froghat)head+=`<path d="M-28 ${ht+8}Q-28 ${ht-22} 0 ${ht-22}Q28 ${ht-22} 28 ${ht+8}Z" fill="#b9d1a9" ${s2}/><path d="M-26 ${ht-2}Q0 ${ht-8} 26 ${ht-2}" fill="none" stroke="#a3bf92" stroke-width="2" stroke-dasharray="3 3"/><path d="M-46 ${ht+10}Q0 ${ht-2} 46 ${ht+10}Q0 ${ht+22} -46 ${ht+10}Z" fill="#aac69a" ${s2}/>`;
  if(acc.bunnyband)head+=`<path d="M-45 ${ht+18}Q0 ${ht-26} 45 ${ht+18}" fill="none" stroke="${INK}" stroke-width="7.5" stroke-linecap="round"/><path d="M-45 ${ht+18}Q0 ${ht-26} 45 ${ht+18}" fill="none" stroke="#e3b7b4" stroke-width="4" stroke-linecap="round"/>`;
  if(acc.headphones)head+=`<path d="M-54 -86a54 58 0 0 1 108 0" fill="none" stroke="${INK}" stroke-width="10" stroke-linecap="round"/><path d="M-54 -86a54 58 0 0 1 108 0" fill="none" stroke="#e6d8c0" stroke-width="5.5" stroke-linecap="round"/>`+mir(`<rect x="-66" y="-102" width="20" height="32" rx="10" fill="#e6d8c0" ${s2}/><circle cx="-56" cy="-86" r="5" fill="#cdbb9c"/>`);
  if(acc.bow)side+=`<g transform="translate(30 ${-120+hy}) rotate(14)"><path d="M0 0C-6 -12 -22 -14 -20 0C-22 14 -6 12 0 0Z" fill="#e3b7b4" ${s3}/><path d="M0 0C6 -12 22 -14 20 0C22 14 6 12 0 0Z" fill="#e3b7b4" ${s3}/><path d="M-3 3q-6 10 -4 16M3 3q6 10 4 16" fill="none" stroke="#e3b7b4" stroke-width="4" stroke-linecap="round"/><circle r="4.6" fill="#d9a3a0" ${s3}/></g>`;
- if(acc.clips)side+=`<g transform="translate(-34 ${-114+hy}) rotate(-20)"><rect x="-10" y="-2" width="20" height="4" rx="2" fill="#d8c7a6" ${s3}/><circle cx="-4" cy="-2" r="3.6" fill="#fffaf2" stroke="${INK}" stroke-width="1.4"/><circle cx="4" cy="-2" r="3.6" fill="#fffaf2" stroke="${INK}" stroke-width="1.4"/></g><g transform="translate(-28 ${-102+hy}) rotate(-20)"><rect x="-10" y="-2" width="20" height="4" rx="2" fill="#d8c7a6" ${s3}/><circle cx="0" cy="-2" r="3.6" fill="#fffaf2" stroke="${INK}" stroke-width="1.4"/></g>`;
+ if(acc.pearlclips)side+=`<g transform="translate(-34 ${-114+hy}) rotate(-20)"><rect x="-10" y="-2" width="20" height="4" rx="2" fill="#d8c7a6" ${s3}/><circle cx="-4" cy="-2" r="3.6" fill="#fffaf2" stroke="${INK}" stroke-width="1.4"/><circle cx="4" cy="-2" r="3.6" fill="#fffaf2" stroke="${INK}" stroke-width="1.4"/></g><g transform="translate(-28 ${-102+hy}) rotate(-20)"><rect x="-10" y="-2" width="20" height="4" rx="2" fill="#d8c7a6" ${s3}/><circle cx="0" cy="-2" r="3.6" fill="#fffaf2" stroke="${INK}" stroke-width="1.4"/></g>`;
  if(acc.gradcap)head+=`<path d="M-24 ${ht+2}v-9q24 -9 48 0v9q-24 10 -48 0z" fill="#5d6378" ${s2}/><path d="M-46 ${ht-8}L0 ${ht-24}L46 ${ht-8}L0 ${ht+6}Z" fill="#6a7088" ${s2}/><path d="M0 ${ht-8}L30 ${ht-2}v16" fill="none" stroke="#f3d58a" stroke-width="2.6" stroke-linecap="round"/><rect x="26.5" y="${ht+12}" width="7" height="10" rx="3" fill="#f3d58a" ${s3}/><circle cx="0" cy="${ht-8}" r="3" fill="#f3d58a"/>`;
  if(acc.cap)head+=`<path d="M-34 ${ht+12}Q-36 ${ht-24} 0 ${ht-24}Q36 ${ht-24} 34 ${ht+12}Z" fill="#ece0cb" ${s2}/><path d="M-2 ${ht-22}V${ht+6}" stroke="#dccbb0" stroke-width="2"/><path d="M-8 ${ht+8}Q28 ${ht} 56 ${ht+12}Q30 ${ht+20} -8 ${ht+15}Z" fill="#ddccb1" ${s2}/><circle cx="0" cy="${ht-24}" r="3.4" fill="#ddccb1" ${s3}/>`;
  if(acc.earmuffs)head+=`<path d="M-52 -92a52 54 0 0 1 104 0" fill="none" stroke="${INK}" stroke-width="8" stroke-linecap="round"/><path d="M-52 -92a52 54 0 0 1 104 0" fill="none" stroke="#5c5a62" stroke-width="4" stroke-linecap="round"/>`+mir(`<g>${[[0,0,13],[-7,-8,7],[7,-8,7],[-9,5,7],[9,5,7],[0,10,7]].map(([dx,dy,r])=>`<circle cx="${-56+dx}" cy="${-88+dy}" r="${r}" fill="#ece3d3" ${s3}/>`).join('')}<circle cx="-56" cy="-88" r="12" fill="#ece3d3"/></g>`);
- if(acc.sprout)side+=`<g transform="translate(30 ${-112+hy}) rotate(-62)"><rect x="-22" y="-3.5" width="40" height="7" rx="2" fill="#e8c77a" ${s3}/><path d="M18 -3.5L26 0L18 3.5Z" fill="#efd9b8" ${s3}/><path d="M23.5 -1L26 0L23.5 1Z" fill="${INK}"/><rect x="-26" y="-3.5" width="6" height="7" rx="2" fill="#e3b7b4" ${s3}/></g>`;
+ if(acc.pencil)side+=`<g transform="translate(30 ${-112+hy}) rotate(-62)"><rect x="-22" y="-3.5" width="40" height="7" rx="2" fill="#e8c77a" ${s3}/><path d="M18 -3.5L26 0L18 3.5Z" fill="#efd9b8" ${s3}/><path d="M23.5 -1L26 0L23.5 1Z" fill="${INK}"/><rect x="-26" y="-3.5" width="6" height="7" rx="2" fill="#e3b7b4" ${s3}/></g>`;
+ if(acc.strawberry)head+=`<path d="M-38 ${ht+14}Q-40 ${ht-26} 0 ${ht-28}Q40 ${ht-26} 38 ${ht+14}Z" fill="#f49aa3" ${s2}/>${[[-22,-6],[-6,-14],[12,-10],[24,2],[-14,6],[4,2]].map(([x,y])=>`<ellipse cx="${x}" cy="${ht+y}" rx="1.8" ry="2.6" fill="#fde7a8"/>`).join('')}${[0,1,2,3,4].map(k=>{const a=-90+k*72;return`<ellipse cx="${(Math.cos(a*Math.PI/180)*9).toFixed(1)}" cy="${(ht-27+Math.sin(a*Math.PI/180)*6).toFixed(1)}" rx="7" ry="4" transform="rotate(${a} ${(Math.cos(a*Math.PI/180)*9).toFixed(1)} ${(ht-27+Math.sin(a*Math.PI/180)*6).toFixed(1)})" fill="#9fcf8d"/>`}).join('')}<path d="M0 ${ht-30}v-8" stroke="#7fb06d" stroke-width="3" stroke-linecap="round"/>`;
+ if(acc.clips)side+=`<g transform="translate(-30 ${-116+hy})">${star5(0,0,8,'#fbe0a0')}${star5(12,8,6,'#d6cbf0')}</g>`.replace(/<path d="([^"]+)" fill="([^"]+)"\/>/g,`<path d="$1" fill="$2" stroke="${INK}" stroke-width="1.8" stroke-linejoin="round"/>`);
+ if(acc.sprout)head+=`<path d="M0 ${ht+2}V${ht-14}" stroke="#7fae6c" stroke-width="3" stroke-linecap="round"/><ellipse cx="-8" cy="${ht-16}" rx="9" ry="5" fill="#a9d396" ${s3} transform="rotate(-25 -8 ${ht-16})"/><ellipse cx="8" cy="${ht-18}" rx="9" ry="5" fill="#b9dca7" ${s3} transform="rotate(25 8 ${ht-18})"/>`;
  if(acc.daisy)side+=`<g transform="translate(-32 ${-116+hy})">${[0,1,2,3,4,5,6,7].map(i=>`<ellipse cx="0" cy="-7" rx="3.4" ry="7" fill="#fffdf7" stroke="${INK}" stroke-width="1.4" transform="rotate(${i*45})"/>`).join('')}<circle r="4.4" fill="#f3d58a" stroke="${INK}" stroke-width="1.4"/></g>`;
  if(acc.pearls)neck+=Array.from({length:11},(_,k)=>{const x=-38+k*7.6,y=-63+(1-(x/46)**2)*10;return`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" fill="#fffaf2" stroke="${INK}" stroke-width="1.3"/>`}).join('');
  if(acc.backpack)backAcc+=`<rect x="34" y="-78" width="34" height="50" rx="12" fill="#d9a48f" ${s2}/><rect x="40" y="-56" width="22" height="16" rx="6" fill="#e3b8a6" ${s3}/>`,neck+=`<path d="M-32 -64q-6 20 -2 40M32 -64q6 20 2 40" fill="none" stroke="${INK}" stroke-width="7" stroke-linecap="round"/><path d="M-32 -64q-6 20 -2 40M32 -64q6 20 2 40" fill="none" stroke="#d9a48f" stroke-width="3.6" stroke-linecap="round"/>`;
@@ -407,31 +410,34 @@ const ITEMS=[
  {id:'shelf',t:'decor',n:'Bookshelf',p:18,d:'Adds a book per hour studied.'},
  {id:'lights',t:'decor',n:'String lights',p:22,d:'Twinkle across the wall.'},
  {id:'globe',t:'decor',n:'Desk globe',p:25,d:'For big dreams.'},
- {id:'bow',t:'wear',sl:'side',n:'Hair bow',p:2,d:'Dusty rose.'},
- {id:'clips',t:'wear',sl:'side',n:'Pearl clips',p:2,d:'Two simple hair clips.'},
- {id:'daisy',t:'wear',sl:'side',n:'Tucked daisy',p:2,d:'A daisy behind one ear.'},
- {id:'sprout',t:'wear',sl:'side',n:'Pencil',p:2,d:'Tucked behind one ear.'},
- {id:'bowtie',t:'wear',sl:'neck',n:'Bow tie',p:2,d:'Charcoal.'},
- {id:'pearls',t:'wear',sl:'neck',n:'Pearl necklace',p:4,d:'A simple strand.'},
- {id:'bandana',t:'wear',sl:'neck',n:'Bandana',p:3,d:'Sage cotton.'},
- {id:'scarf',t:'wear',sl:'neck',n:'Scarf',p:4,d:'Terracotta knit.'},
- {id:'glasses',t:'wear',sl:'face',n:'Round glasses',p:3,d:'Rose-gold frames.'},
- {id:'hearts',t:'wear',sl:'face',n:'Sunglasses',p:4,d:'Round and tinted.'},
- {id:'beret',t:'wear',sl:'head',n:'Beret',p:4,d:'Charcoal wool.'},
- {id:'beanie',t:'wear',sl:'head',n:'Beanie',p:4,d:'Oat, ribbed.'},
- {id:'cap',t:'wear',sl:'head',n:'Cap',p:4,d:'Oat canvas.'},
- {id:'froghat',t:'wear',sl:'head',n:'Bucket hat',p:5,d:'Soft sage canvas.'},
- {id:'crown',t:'wear',sl:'head',n:'Flower crown',p:5,d:'Small and delicate.'},
- {id:'strawberry',t:'wear',sl:'head',n:'Knit headband',p:4,d:'Cream, cable knit.'},
- {id:'bunnyband',t:'wear',sl:'head',n:'Hairband',p:3,d:'Thin and dusty rose.'},
- {id:'earmuffs',t:'wear',sl:'head',n:'Earmuffs',p:5,d:'Cream and charcoal.'},
- {id:'headphones',t:'wear',sl:'head',n:'Headphones',p:5,d:'Oat over-ears.'},
- {id:'gradcap',t:'wear',sl:'head',n:'Graduation cap',p:8,d:'Navy, with a gold tassel.'},
- {id:'sweater',t:'wear',sl:'body',n:'Sweater',p:6,d:'Dusty blue knit.'},
- {id:'cardigan',t:'wear',sl:'body',n:'Cardigan',p:6,d:'Oat knit with buttons.'},
- {id:'overalls',t:'wear',sl:'body',n:'Overalls',p:7,d:'Soft denim blue.'},
- {id:'raincoat',t:'wear',sl:'body',n:'Raincoat',p:7,d:'Muted mustard.'},
- {id:'backpack',t:'wear',sl:'back',n:'Backpack',p:6,d:'Terracotta canvas.'}];
+ {id:'bow',t:'wear',sl:'side',n:'Hair bow',p:2,d:'A little dusty-rose bow.'},
+ {id:'clips',t:'wear',sl:'side',n:'Star clips',p:2,d:'Two tiny stars for bright ideas.'},
+ {id:'pearlclips',t:'wear',sl:'side',n:'Pearl clips',p:2,d:'Simple, sweet and shiny.'},
+ {id:'daisy',t:'wear',sl:'side',n:'Tucked daisy',p:2,d:'Picked just for you.'},
+ {id:'pencil',t:'wear',sl:'side',n:'Pencil',p:2,d:'Always ready to take notes.'},
+ {id:'sprout',t:'wear',sl:'head',n:'Little sprout',p:2,d:'Growing a little every day.'},
+ {id:'bowtie',t:'wear',sl:'neck',n:'Bow tie',p:2,d:'Dressed up for exam day.'},
+ {id:'pearls',t:'wear',sl:'neck',n:'Pearl necklace',p:4,d:'A tiny touch of fancy.'},
+ {id:'bandana',t:'wear',sl:'neck',n:'Bandana',p:3,d:'Soft sage and adventure-ready.'},
+ {id:'scarf',t:'wear',sl:'neck',n:'Scarf',p:4,d:'For chilly study nights.'},
+ {id:'glasses',t:'wear',sl:'face',n:'Round glasses',p:3,d:'For extra-careful reading.'},
+ {id:'hearts',t:'wear',sl:'face',n:'Sunglasses',p:4,d:'Too cool for homework.'},
+ {id:'beret',t:'wear',sl:'head',n:'Beret',p:4,d:'Very artsy, very chic.'},
+ {id:'beanie',t:'wear',sl:'head',n:'Beanie',p:4,d:'Keeps little ears toasty.'},
+ {id:'strawberry',t:'wear',sl:'head',n:'Strawberry beanie',p:5,d:'Berry cute and extra squishy.'},
+ {id:'knitband',t:'wear',sl:'head',n:'Knit headband',p:4,d:'Cozy ears, cozy mind.'},
+ {id:'cap',t:'wear',sl:'head',n:'Cap',p:4,d:'Off to the library.'},
+ {id:'froghat',t:'wear',sl:'head',n:'Bucket hat',p:5,d:'For sunny study breaks.'},
+ {id:'crown',t:'wear',sl:'head',n:'Flower crown',p:5,d:'Blooming with ideas.'},
+ {id:'bunnyband',t:'wear',sl:'head',n:'Hairband',p:3,d:'Keeps the fluff in place.'},
+ {id:'earmuffs',t:'wear',sl:'head',n:'Earmuffs',p:5,d:'Snow day approved.'},
+ {id:'headphones',t:'wear',sl:'head',n:'Headphones',p:5,d:'Lo-fi and locked in.'},
+ {id:'gradcap',t:'wear',sl:'head',n:'Graduation cap',p:8,d:'You’re going to make it!'},
+ {id:'sweater',t:'wear',sl:'body',n:'Sweater',p:6,d:'Like a warm little hug.'},
+ {id:'cardigan',t:'wear',sl:'body',n:'Cardigan',p:6,d:'Cozy librarian energy.'},
+ {id:'overalls',t:'wear',sl:'body',n:'Overalls',p:7,d:'Ready for a garden day.'},
+ {id:'raincoat',t:'wear',sl:'body',n:'Raincoat',p:7,d:'Puddles, here we come!'},
+ {id:'backpack',t:'wear',sl:'back',n:'Backpack',p:6,d:'All packed for class.'}];
 const LINES={idle:['Ready when you are.','Pick a length and I’ll grab my book.','Shall we study together?','Your planner is looking good.'],focus:['Reading right beside you.','You’ve got this.','One page at a time.','I’m right here.','Nice and steady.'],pause:'Taking a breather? Good idea.',back:'Welcome back! I kept our spot.',sleep:'Zzz… press Start and I’ll wake up.',brk:'Stretch, sip some water, look outside.'};
 const KEY='studybuddy.v1';
 const fresh=()=>({v:2,species:'cat',ci:0,name:'Mochi',acorns:4,owned:[],hidden:[],bg:'peach',bgs:['peach','rain'],sessions:[],tasks:[],decks:[],tests:[],run:null,dur:25,updated:0,welcomed:false,pos:{},snd:{vol:{}},music:'',userName:'',theme:{},garden:{open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]}});
