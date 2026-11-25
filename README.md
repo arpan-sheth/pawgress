@@ -21,6 +21,11 @@ A cozy study companion by Moki and Mochi. No account, no tracking, no paywall. E
 - Flowers never wilt. Pick blooms for your bouquet.
 - 9 flowers to discover through study milestones, collected in a flower book
 
+**Advent calendar**
+- From mid-November, a gift button counts down to Christmas
+- 25 doors, December 1 to 25, each with a special edition holiday flower or outfit
+- Missed a day? Open it later. Holiday items stay yours forever.
+
 **Sounds**
 - Lo-fi music, white noise, ocean waves, rain and a fireplace, all generated live in the browser. Mix them with separate volumes.
 - Paste your own Spotify, YouTube, SoundCloud or Apple Music link to play it in the app, or link any music page
