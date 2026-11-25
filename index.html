@@ -439,7 +439,7 @@ const subjects=()=>[...new Set([...S.sessions.map(s=>s.subject),...S.tasks.map(t
 const bg=()=>BGS.find(b=>b.id===(pv&&pv.k==='bg'?pv.id:S.bg))||BGS[0];
 const buddyName=()=>S.name||SP[S.species].name;
 
-const accNow=()=>{const o={},pvIt=pv&&pv.k==='item'?ITEMS.find(x=>x.id===pv.id&&x.t==='wear'):null;for(const it of ITEMS)if(it.t==='wear'&&has(it.id)&&!(pvIt&&it.sl===pvIt.sl&&it.id!==pvIt.id))o[it.id]=true;return o};
+const accNow=()=>{const o={};for(const it of ITEMS)if(it.t==='wear'&&has(it.id))o[it.id]=true;return o};
 const mini=(sp,ci)=>`<svg class="stk" viewBox="-82 -178 164 190" aria-hidden="true">${animal({sp,ci,mood:'idle'})}</svg>`;
 function ring(key,cur,interactive){const n=SP[key].br.length,arms=SP[key].br.map((b,i)=>{const a=(i*360/n+180+(n%2?0:180/n))%360,sel=interactive&&i===cur;return`<g transform="translate(160 160) rotate(${a.toFixed(1)}) translate(0 ${sel?-90:-102})" ${interactive?`class="arm${sel?' on':''}" data-act="breed" data-v="${i}" role="button" tabindex="0" aria-label="${esc(b.n)}" aria-pressed="${sel}"`:''}><title>${esc(b.n)}</title>${pawArm(key,i)}</g>`}).join('');
  return`<svg class="ring" viewBox="0 0 320 320" role="group" aria-label="Breeds"><circle cx="160" cy="160" r="74" class="wash"/>${arms}<g transform="translate(160 212) scale(.66)">${animal({sp:key,ci:cur,mood:'idle',acc:interactive?accNow():{}})}</g></svg>`}
@@ -911,8 +911,8 @@ $('#view').addEventListener('click',e=>{const t=e.target.closest('[data-act]');i
  case'preview':pv=(pv&&pv.id===id&&pv.k===t.dataset.k)?null:{k:t.dataset.k,id};if(pv)say(t.dataset.k==='bg'?'Ooh, what a view! Want to move in?':'How do I look?');renderAll();break;
  case'endPreview':pv=null;renderAll();break;
  case'resetPos':S.pos={};save();renderAll();say('Back to the original spots!');break;
- case'buy':{const it=ITEMS.find(i=>i.id===id);if(it&&S.acorns>=it.p&&!S.owned.includes(id)){S.acorns-=it.p;S.owned.push(id);S.hidden=S.hidden.filter(x=>x!==id);if(it.t==='wear')for(const o of ITEMS)if(o.t==='wear'&&o.sl===it.sl&&o.id!==id&&!S.hidden.includes(o.id))S.hidden.push(o.id);pv=null;happyUntil=now()+3200;say(it.t==='decor'?`Ooh, a ${it.n.toLowerCase()}! Drag it anywhere you like.`:`Ooh, a ${it.n.toLowerCase()}! Thank you.`);save();renderAll()}break}
- case'toggleItem':{const on=S.hidden.includes(id);S.hidden=on?S.hidden.filter(x=>x!==id):[...S.hidden,id];const it=ITEMS.find(x=>x.id===id);if(on&&it&&it.t==='wear')for(const o of ITEMS)if(o.t==='wear'&&o.sl===it.sl&&o.id!==id&&!S.hidden.includes(o.id))S.hidden.push(o.id)}save();renderAll();break;
+ case'buy':{const it=ITEMS.find(i=>i.id===id);if(it&&S.acorns>=it.p&&!S.owned.includes(id)){S.acorns-=it.p;S.owned.push(id);S.hidden=S.hidden.filter(x=>x!==id);pv=null;happyUntil=now()+3200;say(it.t==='decor'?`Ooh, a ${it.n.toLowerCase()}! Drag it anywhere you like.`:`Ooh, a ${it.n.toLowerCase()}! Thank you.`);save();renderAll()}break}
+ case'toggleItem':{const on=S.hidden.includes(id);S.hidden=on?S.hidden.filter(x=>x!==id):[...S.hidden,id];}save();renderAll();break;
  case'buyBg':{const b=BGS.find(x=>x.id===id);if(b&&S.acorns>=b.p&&!S.bgs.includes(id)){S.acorns-=b.p;S.bgs.push(id);S.bg=id;pv=null;happyUntil=now()+3200;say('A new view! I love it.');save();renderAll()}break}
  case'useBg':S.bg=id;pv=null;save();renderAll();break;
  }});
@@ -955,7 +955,7 @@ function tick(){const r=S.run;if(r&&r.paused==null&&remaining()<=0){finish(true)
  if(now()-lineAt>90000){const L=m==='focus'?LINES.focus:m==='sleep'?[LINES.sleep]:LINES.idle;say(L[Math.floor(Math.random()*L.length)])}}
 setInterval(tick,500);
 if(S.run&&S.run.paused==null&&remaining()<=0)finish(true);
-{const seen={};for(const it of ITEMS)if(it.t==='wear'&&S.owned.includes(it.id)&&!S.hidden.includes(it.id)){if(seen[it.sl])S.hidden.push(it.id);else seen[it.sl]=1}}applyTheme();renderMusic();renderAll();say(S.run?LINES.focus[1]:isNight()?LINES.sleep:(S.userName?`Hi ${S.userName}! I’m ${buddyName()}. Ready when you are.`:`Hi! I’m ${buddyName()}. Ready when you are.`));welcome();
+applyTheme();renderMusic();renderAll();say(S.run?LINES.focus[1]:isNight()?LINES.sleep:(S.userName?`Hi ${S.userName}! I’m ${buddyName()}. Ready when you are.`:`Hi! I’m ${buddyName()}. Ready when you are.`));welcome();
 
 /* ---------- account sync ---------- */
 (async()=>{try{if(!window.claude||!window.claude.use)return;const db=await window.claude.use('db'),u=await window.claude.use('user');if(!db||!u)return;const id=await u.id();if(!id)return;
