@@ -1,5 +1,5 @@
 // Pawgress offline support: keeps the app working without internet once opened.
-const CACHE = 'pawgress-v24';
+const CACHE = 'pawgress-v25';
 const SHELL = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
