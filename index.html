@@ -207,6 +207,15 @@ details summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:40px}
 .steam{animation:steam 3s ease-in-out infinite;opacity:.7}@keyframes steam{50%{transform:translateY(-6px);opacity:.15}}
 .tw{animation:tw 2.6s ease-in-out infinite}@keyframes tw{50%{opacity:.4}}
 .zz{animation:zz 3s ease-in-out infinite}@keyframes zz{0%{opacity:0;transform:translate(0,6px)}50%{opacity:1}100%{opacity:0;transform:translate(8px,-14px)}}
+.tgpick{position:fixed;inset:0;z-index:69;display:grid;place-items:center;padding:16px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(3px);animation:fadein .2s;overflow:auto}
+.gcard.tgcard{width:min(480px,100%);position:relative;text-align:left}.tgcard h2{font-size:24px;margin:0 0 6px;padding-right:30px}.tgcard .btn{width:100%;margin-top:14px}.tgcard .row .btn{margin-top:8px}
+.tgx{position:absolute;top:12px;right:14px;border:0;background:none;font-size:26px;line-height:1;color:var(--soft);cursor:pointer}
+.tglink{width:100%;font-size:13px}.tgsmall{font-size:12.5px;text-align:center;margin:10px 0 0}
+.tgduo{display:flex;justify-content:center;gap:4px;margin-bottom:8px}.tgduo svg{width:72px;height:72px}
+.tgfriends{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}.tgfriends span{display:flex;align-items:center;gap:6px;background:var(--wash);border:1.5px solid var(--edge);border-radius:999px;padding:3px 12px 3px 4px;font-size:13px}.tgfriends svg{width:30px;height:30px}
+.tgcd{display:inline-block;margin-left:6px;padding:1px 9px;border-radius:999px;background:var(--wash);border:1.5px solid var(--edge);font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.tgban{display:flex;align-items:center;gap:10px;width:100%;margin:6px 0 10px;padding:8px 14px;border-radius:16px;border:1.5px solid var(--edge);background:var(--wash);color:var(--ink);font:600 14px Nunito,sans-serif;text-align:left;cursor:pointer}.tgban svg{width:34px;height:34px;flex:none}.tgban #tgcd{font-variant-numeric:tabular-nums}
+.tgbtn{width:100%;margin-top:8px}
 .lovem{display:flex;align-items:center;gap:12px;background:var(--wash);border:1.5px solid var(--edge);border-radius:18px;padding:10px 14px;margin:18px 0 4px}
 .lovehearts{display:flex;gap:3px;flex:none}.lovem p{margin:0;font-size:12.5px;color:var(--soft);line-height:1.35}.lovem p b{display:block;color:var(--ink);font-size:14px}
 .perspick{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:4px 0 14px}
@@ -533,10 +542,15 @@ const PERS={
  curious:{n:'Curious',d:'Full of questions and wonder',def:'curious',alt:'cheerful',hello:'Hi, I’m {n}! What are we learning today?',idle:['What’s on your list today?','Did you know octopuses have three hearts?','I wonder what we’ll learn next.'],pet:['Ooh! What was that for?','Hehe, do that again?','I like that!'],petShy:false}};
 const FEEL={cheerful:{n:'cheerful',lines:['What a nice day to learn things!']},proud:{n:'proud',lines:['We did so good! I’m proud of us.','Look at us go!']},excited:{n:'excited',lines:['What a big study day!','We’re on a roll!']},shy:{n:'shy',lines:['I’m glad you’re here.']},curious:{n:'curious',lines:['Ooh, what are we learning?','I wonder what’s next on your list.']},bored:{n:'a bit bored',lines:['Wanna study something? Even 15 minutes?','I’m a little bored… quiz me?']},lonely:{n:'lonely',lines:['I missed you.']},cozy:{n:'cozy',lines:['So cozy in here.','Perfect weather for studying.']},drowsy:{n:'drowsy',lines:['*yawn* Still here, promise.','Mm, maybe some tea?']},happy:{n:'happy',lines:[]},focus:{n:'focused',lines:[]},sleep:{n:'asleep',lines:[]},idle:{n:'calm',lines:[]}};
 const pers=()=>PERS[S.pers]||PERS.bubbly;
+const SHARE_BASE='https://arpan-sheth.github.io/pawgress/';
+function b64e(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function b64d(x){try{x=String(x).replace(/-/g,'+').replace(/_/g,'/');return JSON.parse(decodeURIComponent(escape(atob(x))))}catch(e){return null}}
+function cleanBuddy(o){if(!o||typeof o!=='object'||!SP[o.sp])return null;const n=SP[o.sp].br.length;return{n:String(o.n||'').trim().slice(0,20),b:String(o.b||SP[o.sp].name).trim().slice(0,20)||SP[o.sp].name,sp:o.sp,ci:Math.max(0,Math.min(n-1,Math.floor(+o.ci||0))),acc:Array.isArray(o.acc)?o.acc.filter(id=>typeof id==='string'&&ITEMS.some(i=>i.id===id&&i.t==='wear')).slice(0,12):[]}}
+function cleanTg(t){if(!t||typeof t!=='object')return null;const T=+t.t,D=Math.floor(+t.d);if(!isFinite(T)||!(D>=5&&D<=180)||typeof t.i!=='string')return null;return{i:t.i.slice(0,16),t:T,d:D,role:t.role==='guest'?'guest':'host',started:!!t.started,friends:(Array.isArray(t.friends)?t.friends:[]).map(cleanBuddy).filter(Boolean).slice(0,4)}}
 const LINES={idle:['Ready when you are.','Pick a length and I’ll grab my book.','Shall we study together?','Your planner is looking good.'],focus:['Reading right beside you.','You’ve got this.','One page at a time.','I’m right here.','Nice and steady.'],pause:'Taking a breather? Good idea.',back:'Welcome back! I kept our spot.',sleep:'Zzz… press Start and I’ll wake up.',brk:'Stretch, sip some water, look outside.'};
 const KEY='studybuddy.v1';
-const fresh=()=>({v:2,species:'cat',ci:0,name:'Mochi',acorns:4,owned:[],hidden:[],bg:'peach',bgs:['peach','rain'],sessions:[],tasks:[],decks:[],tests:[],run:null,dur:25,updated:0,welcomed:false,pos:{},snd:{vol:{}},music:'',userName:'',theme:{},garden:{open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},advent:{year:0,opened:[]},exams:[],moodAsk:true,pers:'bubbly',lastSeen:0,love:0});
-const norm=s=>{const o=Object.assign(fresh(),s||{});if(!PERS[o.pers])o.pers='bubbly';if(typeof o.lastSeen!=='number')o.lastSeen=0;o.love=Math.max(0,Math.min(3,Math.floor(+o.love||0)));if(!SP[o.species])o.species='cat';for(const k of['owned','hidden','bgs','sessions','tasks','decks','tests'])if(!Array.isArray(o[k]))o[k]=fresh()[k];if(!o.snd||typeof o.snd!=='object')o.snd={vol:{}};if(!o.snd.vol||typeof o.snd.vol!=='object')o.snd.vol={};if(typeof o.music!=='string')o.music='';if(typeof o.userName!=='string')o.userName='';if(!o.theme||typeof o.theme!=='object')o.theme={};if(!Array.isArray(o.exams))o.exams=[];if(typeof o.moodAsk!=='boolean')o.moodAsk=true;if(!o.advent||typeof o.advent!=='object'||!Array.isArray(o.advent.opened))o.advent={year:0,opened:[]};{const d={open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},g=o.garden&&typeof o.garden==='object'?o.garden:{};o.garden=Object.assign(d,g);for(const k of['seeds','found'])if(!Array.isArray(o.garden[k]))o.garden[k]=[];if(!Array.isArray(o.garden.plots)||o.garden.plots.length!==12)o.garden.plots=Array(12).fill(null);if(!o.garden.picked||typeof o.garden.picked!=='object')o.garden.picked={};o.garden.water=Math.max(0,Math.min(5,+o.garden.water||0))}if(!o.pos||typeof o.pos!=='object'||Array.isArray(o.pos))o.pos={};if(!o.bgs.includes('peach'))o.bgs.push('peach','rain');return o};
+const fresh=()=>({v:2,species:'cat',ci:0,name:'Mochi',acorns:4,owned:[],hidden:[],bg:'peach',bgs:['peach','rain'],sessions:[],tasks:[],decks:[],tests:[],run:null,dur:25,updated:0,welcomed:false,pos:{},snd:{vol:{}},music:'',userName:'',theme:{},garden:{open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},advent:{year:0,opened:[]},exams:[],moodAsk:true,pers:'bubbly',lastSeen:0,love:0,tg:null});
+const norm=s=>{const o=Object.assign(fresh(),s||{});if(!PERS[o.pers])o.pers='bubbly';if(typeof o.lastSeen!=='number')o.lastSeen=0;o.love=Math.max(0,Math.min(3,Math.floor(+o.love||0)));o.tg=cleanTg(o.tg);if(!SP[o.species])o.species='cat';for(const k of['owned','hidden','bgs','sessions','tasks','decks','tests'])if(!Array.isArray(o[k]))o[k]=fresh()[k];if(!o.snd||typeof o.snd!=='object')o.snd={vol:{}};if(!o.snd.vol||typeof o.snd.vol!=='object')o.snd.vol={};if(typeof o.music!=='string')o.music='';if(typeof o.userName!=='string')o.userName='';if(!o.theme||typeof o.theme!=='object')o.theme={};if(!Array.isArray(o.exams))o.exams=[];if(typeof o.moodAsk!=='boolean')o.moodAsk=true;if(!o.advent||typeof o.advent!=='object'||!Array.isArray(o.advent.opened))o.advent={year:0,opened:[]};{const d={open:false,seen:false,seeds:[],water:0,plots:Array(12).fill(null),picked:{},found:[]},g=o.garden&&typeof o.garden==='object'?o.garden:{};o.garden=Object.assign(d,g);for(const k of['seeds','found'])if(!Array.isArray(o.garden[k]))o.garden[k]=[];if(!Array.isArray(o.garden.plots)||o.garden.plots.length!==12)o.garden.plots=Array(12).fill(null);if(!o.garden.picked||typeof o.garden.picked!=='object')o.garden.picked={};o.garden.water=Math.max(0,Math.min(5,+o.garden.water||0))}if(!o.pos||typeof o.pos!=='object'||Array.isArray(o.pos))o.pos={};if(!o.bgs.includes('peach'))o.bgs.push('peach','rain');return o};
 let S=fresh();try{const r=localStorage.getItem(KEY);if(r)S=norm(JSON.parse(r))}catch(e){}
 let feelOv=null,petUntil=0,petAt=0,lastAct=Date.now();let drag=null,pv=null,tab='focus',ref=null,writing=false,pending=false,pushT=0,mood='',lineAt=0,happyUntil=0,audio=null,lastNight=null,offerBreak=false,pickDay=null,cv={mode:'list',deck:null},T=null,F=null,delArm=null;
 const now=()=>Date.now();
@@ -693,20 +707,22 @@ function scene(){const night=isNight(),st=stats();let wall='',floor='',back='',f
  if(has('xorn')&&!has('xtree'))wall+=D('xorn',xOrnArt());
  if(has('xtree'))floor+=D('xtree',xTreeArt(has('xorn')));
  const hearts=now()<petUntil?`<g transform="translate(435 160)" aria-hidden="true">${[[-26,0,0],[0,-14,.15],[26,-2,.3]].map(([x,y,d])=>`<g transform="translate(${x} ${y})"><path class="heartup" style="animation-delay:${d}s" d="M0 6c-7 -5 -10 -9 -8 -13c2 -4 7 -4 8 0c1 -4 6 -4 8 0c2 4 -1 8 -8 13z" fill="#f3a3a0" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/></g>`).join('')}</g>`:'';
- const pet=`<g transform="translate(435 288) scale(.82)"><g class="petme" role="button" tabindex="0" aria-label="Pet ${esc(buddyName())}">${animal({sp:S.species,ci:S.ci,mood,acc:accNow()})}</g></g>${mood==='focus'||mood==='idle'||mood==='sleep'?'':feelBubble(mood)}${hearts}`;
+ const fr=S.tg&&now()<tgEnd()+10*60000?S.tg.friends.slice(0,2):[],frm=S.run&&S.run.together&&S.run.paused==null?'focus':isNight()?'sleep':'idle';
+ const friends=fr.map((f,i)=>{const x=i?118:250,y=i?304:298,acc={};f.acc.forEach(a=>acc[a]=true);const lab=tgLabel(f),wd=Math.max(56,lab.length*7.4+18);return`<g aria-label="${esc(lab)}"><ellipse cx="${x}" cy="${y+4}" rx="46" ry="11" fill="#fbeee4" stroke="${INK}" stroke-width="2" opacity=".95"/><g transform="translate(${x} ${y}) scale(.62)">${animal({sp:f.sp,ci:f.ci,mood:frm,acc})}</g><g transform="translate(${x} ${y+28})"><rect x="${-wd/2}" y="-11" width="${wd}" height="22" rx="11" fill="#fffaf3" stroke="${INK}" stroke-width="1.6"/><text y="4.5" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="700" font-size="12" fill="${INK}">${esc(lab)}</text></g></g>`}).join('');
+ const pet=`${friends}<g transform="translate(435 288) scale(.82)"><g class="petme" role="button" tabindex="0" aria-label="Pet ${esc(buddyName())}">${animal({sp:S.species,ci:S.ci,mood,acc:accNow()})}</g></g>${mood==='focus'||mood==='idle'||mood==='sleep'?'':feelBubble(mood)}${hearts}`;
  {const f=FEEL[mood]||FEEL.idle,sb=$('#sub');if(sb)sb.textContent=`${buddyName()} · feeling ${f.n}`}
  const sv=$('#scene');sv.innerHTML=roomSVG(bg().id,{wall,floor,back,pet,front,glow:has('lamp')&&night},night);const small=tab!=='focus'&&tab!=='style'&&innerWidth<=900;$('#room').classList.toggle('mini',small);$('#room').classList.toggle('canmove',!locked());sv.setAttribute('preserveAspectRatio',small?'xMidYMax slice':'xMidYMid meet')}
 
 /* ---------- Focus ---------- */
 const fmt=ms=>{const s=Math.ceil(ms/1000),m=Math.floor(s/60);return String(m).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 function vFocus(){const r=S.run;if(r){const left=remaining(),pct=100-left/(r.dur*60000)*100,brk=r.kind==='break';
-  return `<div class="digits" id="clock">${fmt(left)}</div><div class="bar"><i id="prog" style="width:${pct.toFixed(1)}%"></i></div><p class="center muted">${brk?'Break time · no screens if you can':(r.subject?'Studying <b>'+esc(r.subject)+'</b> · ':'')+r.dur+' min · worth '+reward(r.dur,true)+' acorns'}</p><div class="row"><button class="btn ghost" data-act="pause">${r.paused!=null?'Resume':'Pause'}</button><button class="btn ghost" data-act="stop">${brk?'Skip break':'End early'}</button></div>${brk?'':'<p class="center muted" style="margin-top:12px">Ending early still counts if you did 5+ minutes.</p>'}`}
+  return `<div class="digits" id="clock">${fmt(left)}</div><div class="bar"><i id="prog" style="width:${pct.toFixed(1)}%"></i></div><p class="center muted">${brk?'Break time · no screens if you can':(r.subject?'Studying <b>'+esc(r.subject)+'</b> · ':'')+r.dur+' min · worth '+reward(r.dur,true)+' acorns'}</p>${r.together?`<button class="tgban" data-act="together">${S.tg&&S.tg.friends[0]?mini(S.tg.friends[0].sp,S.tg.friends[0].ci):''}<span>Studying together with <b>${esc(tgWho())}</b></span></button>`:''}<div class="row">${r.together?'':`<button class="btn ghost" data-act="pause">${r.paused!=null?'Resume':'Pause'}</button>`}<button class="btn ghost" data-act="stop">${brk?'Skip break':'End early'}</button></div>${brk?'':'<p class="center muted" style="margin-top:12px">Ending early still counts if you did 5+ minutes.</p>'}`}
  const plan=S.tasks.filter(t=>!t.done&&t.due<=today()).slice(0,3);
  const ne=nextExam(),nd=ne&&daysUntil(ne.date);
  return `${ne?`<button class="examban${nd<=3?' soon':''}" data-act="tab" data-v="plan">${CAL}<span><b>${esc(ne.name)}</b> ${examWhen(nd)}</span><span class="exn">${nd===0?'Today!':nd+' day'+(nd===1?'':'s')}</span></button>`:''}<div class="digits">${fmt(S.dur*60000)}</div>${offerBreak?`<button class="btn ghost sm" data-act="break">Take a 5-minute break</button>`:''}
  <label for="subj">What are you studying?</label><input id="subj" list="subjList" maxlength="60" placeholder="Biology chapter 4" value="${esc(S.lastSubject||'')}"><datalist id="subjList">${subjects().map(s=>`<option value="${esc(s)}">`).join('')}</datalist>
  <label>Session length</label><div class="chips">${[15,25,45,60].map(m=>`<button class="chip" data-act="dur" data-v="${m}" aria-pressed="${S.dur===m}">${m} min</button>`).join('')}<input class="chip num" id="custom" type="number" min="5" max="180" inputmode="numeric" aria-label="Custom minutes" placeholder="Other" value="${[15,25,45,60].includes(S.dur)?'':S.dur}"></div>
- <button class="btn" data-act="start">Start focusing</button><p class="center muted" style="margin-top:10px">1 acorn per 5 minutes, plus 2 for finishing.</p>
+ ${S.tg&&now()<S.tg.t?`<button class="tgban" data-act="together">${S.tg.friends[0]?mini(S.tg.friends[0].sp,S.tg.friends[0].ci):''}<span>Studying with <b>${esc(tgWho())}</b> starts in <b id="tgcd">${fmt(S.tg.t-now())}</b></span></button>`:''}<button class="btn" data-act="start">Start focusing</button><button class="btn ghost tgbtn" data-act="together">${S.tg&&now()<tgEnd()?'Study together · details':'Study together'}</button><p class="center muted" style="margin-top:10px">1 acorn per 5 minutes, plus 2 for finishing.</p>
  <h3>Today’s plan</h3>${plan.length?`<ul class="list">${plan.map(t=>`<li><button class="check" data-act="toggleTask" data-id="${t.id}" aria-label="Mark done"></button><span class="s">${esc(t.title)}${t.subject?`<span class="tag">${esc(t.subject)}</span>`:''}${t.due<today()?' <span class="muted">· overdue</span>':''}</span><button class="link" data-act="focusTask" data-id="${t.id}">Focus</button></li>`).join('')}</ul>`:`<p class="muted">Nothing due today. Add tasks in the <button class="link" data-act="tab" data-v="plan">Planner</button>.</p>`}`}
 
 /* ---------- Planner ---------- */
@@ -806,6 +822,55 @@ function spendLove(p){S.love=(S.love||0)+p;let g=0;while(S.love>=LOVE_EVERY){S.l
  if(g){S.acorns+=g;setTimeout(()=>{happyUntil=now()+3600;petUntil=now()+1600;mood=computeMood();scene();toast(`+${g} acorns · a gift from ${buddyName()}`);say(`You spoil me! I’m so happy. Here, ${g} acorns back for you.`,true)},1600)}}
 function loveMeter(){const h=f=>`<svg viewBox="-11 -11 22 19" width="22" height="19" aria-hidden="true"><path d="M0 6c-7 -5 -10 -9 -8 -13c2 -4 7 -4 8 0c1 -4 6 -4 8 0c2 4 -1 8 -8 13z" fill="${f?'#f3a3a0':'#fffaf3'}" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
  return `<div class="lovem" role="group" aria-label="${esc(buddyName())}’s happiness: ${S.love} of ${LOVE_EVERY}"><div class="lovehearts">${[0,1,2,3].map(i=>h(i<S.love)).join('')}</div><p><b>${esc(buddyName())}’s happiness</b>Every ${LOVE_EVERY} acorns you spend on ${esc(buddyName())} fills the hearts, then ${esc(buddyName())} gives you ${LOVE_GIFT} acorns back.</p></div>`}
+let pendingJoin=null;
+function meBuddy(){return{n:(S.userName||'').slice(0,20),b:buddyName().slice(0,20),sp:S.species,ci:S.ci,acc:Object.keys(accNow()).slice(0,12)}}
+const tgEnd=()=>S.tg?S.tg.t+S.tg.d*60000:0;
+const tgLabel=f=>f.n?`${f.n}’s ${f.b}`:f.b;
+const tgWho=()=>S.tg&&S.tg.friends.length?S.tg.friends.map(f=>f.n||f.b).join(' & '):'a friend';
+const clockAt=t=>new Date(t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+function tgJoinLink(){return SHARE_BASE+'#join='+b64e({v:1,i:S.tg.i,t:S.tg.t,d:S.tg.d,h:meBuddy()})}
+function tgBackLink(){return SHARE_BASE+'#buddy='+b64e({v:1,i:S.tg.i,f:meBuddy()})}
+function togetherBonus(){S.acorns+=2;setTimeout(()=>toast('+2 acorns · studied together'),2700)}
+function addFriend(f){if(!S.tg||!f)return false;if(S.tg.friends.some(x=>x.n===f.n&&x.b===f.b&&x.sp===f.sp))return true;if(S.tg.friends.length>=4)return false;S.tg.friends.push(f);return true}
+function readLink(str){const m=String(str||'').match(/#(join|buddy)=([A-Za-z0-9_-]+)/);if(!m)return null;const o=b64d(m[2]);return o&&{k:m[1],o}}
+function handleLink(L,quiet){if(!L){if(!quiet)toast('That doesn’t look like a Pawgress link.');return}
+ if(L.k==='join'){const o=L.o,h=cleanBuddy(o.h),T=+o.t,D=Math.floor(+o.d);if(!h||!isFinite(T)||!(D>=5&&D<=180)||typeof o.i!=='string'){toast('That invite link looks broken.');return}
+  if(S.tg&&S.tg.i===o.i){if(S.tg.role==='host'){toast('That’s your own invite link!');return}openTogether();return}
+  if(T+D*60000<=now()){toast('That study session already ended. Ask for a new link!');return}
+  if(!S.welcomed){pendingJoin=L;return}showJoin({i:o.i.slice(0,16),t:T,d:D,h});return}
+ const f=cleanBuddy(L.o.f);if(!f){toast('That buddy link looks broken.');return}
+ if(!S.tg||S.tg.i!==L.o.i||now()>tgEnd()){toast('That buddy link is for a different study session.');return}
+ if(addFriend(f)){save();renderAll();toast(`${tgLabel(f)} joined your room!`);say(`Yay, ${f.b} is here! Let’s study together.`,true)}else toast('Your room is full (4 friends max).')}
+function tgModal(html,cls){document.querySelector('.tgpick')?.remove();const w=document.createElement('div');w.className='tgpick';w.setAttribute('role','dialog');w.setAttribute('aria-label','Study together');w.innerHTML=`<div class="gcard tgcard ${cls||''}"><button class="tgx" data-tg="x" aria-label="Close">×</button>${html}</div>`;
+ const close=()=>{w.remove();document.removeEventListener('keydown',ek)},ek=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',ek);
+ w.addEventListener('click',e=>{if(e.target===w){close();return}const b=e.target.closest('[data-tg]');if(!b)return;const k=b.dataset.tg;
+  if(k==='x'||k==='later'){close();return}
+  if(k==='len'||k==='in'){w.querySelectorAll(`[data-tg=${k}]`).forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+  if(k==='create'){const len=+w.querySelector('[data-tg=len][aria-pressed=true]').dataset.v,inn=+w.querySelector('[data-tg=in][aria-pressed=true]').dataset.v;S.tg={i:Math.random().toString(36).slice(2,10),t:Math.ceil((now()+inn*60000)/15000)*15000,d:len,role:'host',started:false,friends:[]};save();renderAll();openTogether();return}
+  if(k==='copy'||k==='share'){const inp=w.querySelector('.tglink'),url=inp.value;
+   if(k==='share'&&navigator.share){navigator.share({title:'Study with me on Pawgress',text:b.dataset.msg||'Study with me on Pawgress!',url}).catch(()=>{});return}
+   const fb=()=>{inp.focus();inp.select();toast('Link selected. Copy it to send.')};try{navigator.clipboard.writeText(url).then(()=>toast('Link copied!'),fb)}catch(x){fb()}return}
+  if(k==='paste'){const L=readLink(w.querySelector('#tgPaste').value);handleLink(L);if(L&&L.k==='buddy'&&document.querySelector('.tgpick'))openTogether();return}
+  if(k==='join'){const J=w._join;S.tg={i:J.i,t:J.t,d:J.d,role:'guest',started:false,friends:[J.h]};save();renderAll();say(`${J.h.b} is coming over! We’ll start at ${clockAt(J.t)}.`,true);openTogether();return}
+  if(k==='cancel'){if(S.run&&S.run.together)S.run.together=false;S.tg=null;save();renderAll();close();toast('Study together cancelled.');return}});
+ document.body.appendChild(w);setTimeout(()=>(w.querySelector('[data-tg=join],[data-tg=create],[data-tg=copy]')||w.querySelector('button')).focus(),30);return w}
+function showJoin(J){const w=tgModal(`<div class="tgduo">${mini(J.h.sp,J.h.ci)}${mini(S.species,S.ci)}</div><h2>${esc(J.h.n||J.h.b)} wants to study together!</h2>
+ <p class="muted">${esc(tgLabel(J.h))} will sit in your room while you both focus for <b>${J.d} minutes</b>, starting ${J.t>now()?`at <b>${clockAt(J.t)}</b>`:'<b>now</b> (it already began)'}.</p>
+ <button class="btn" data-tg="join">Join</button><button class="link" data-tg="later" style="margin-top:10px">Not now</button>`);w._join=J}
+function openTogether(){openSheet(false);openSettings(false);const T=S.tg&&now()<tgEnd()?S.tg:null;
+ if(!T){if(S.tg){S.tg=null;save()}const d=[15,25,45,60].includes(S.dur)?S.dur:25;
+  tgModal(`<h2>Study together</h2><p class="muted">Send a link to a friend. You’ll both start the same timer at the same moment, and your buddies sit in each other’s rooms. Finish together for 2 bonus acorns.</p>
+  <label>Session length</label><div class="chips">${[15,25,45,60].map(m=>`<button class="chip" data-tg="len" data-v="${m}" aria-pressed="${m===d}">${m} min</button>`).join('')}</div>
+  <label>Start in</label><div class="chips">${[1,2,5,10].map(m=>`<button class="chip" data-tg="in" data-v="${m}" aria-pressed="${m===2}">${m} min</button>`).join('')}</div>
+  <button class="btn" data-tg="create">Create invite link</button><p class="muted tgsmall">No account needed. Everyone just needs the link.</p>
+  <label for="tgPaste" style="margin-top:16px">Got an invite? Paste it here</label><div class="row"><input id="tgPaste" placeholder="Paste a friend’s link"><button class="btn ghost" data-tg="paste">Join</button></div>`);return}
+ const host=T.role==='host',link=host?tgJoinLink():tgBackLink(),pending=now()<T.t;
+ tgModal(`<h2>Study together</h2><p class="muted">${T.d} minutes ${pending?`starting at <b>${clockAt(T.t)}</b> <span class="tgcd" data-tgcd>${fmt(T.t-now())}</span>`:'<b>happening now</b>'}</p>
+ ${T.friends.length?`<div class="tgfriends">${T.friends.map(f=>`<span>${mini(f.sp,f.ci)}<b>${esc(tgLabel(f))}</b></span>`).join('')}</div>`:''}
+ <label>${host?'Send this invite to your friends':'Send your buddy back so they can see you too'}</label>
+ <input class="tglink" readonly value="${esc(link)}" aria-label="Link" onclick="this.select()"><div class="row"><button class="btn ghost" data-tg="copy">Copy link</button>${navigator.share?`<button class="btn ghost" data-tg="share" data-msg="${host?`Study with me on Pawgress! ${T.d} min at ${clockAt(T.t)}.`:`Here’s my buddy for our study session!`}">Share</button>`:''}</div>
+ ${host?`<label for="tgPaste">Got a buddy link back? Paste it here</label><div class="row"><input id="tgPaste" placeholder="Paste a friend’s link"><button class="btn ghost" data-tg="paste">Add</button></div>`:''}
+ <button class="link" data-tg="cancel" style="margin-top:12px">${host?'Cancel session':'Leave session'}</button>`)}
 function petBuddy(){if(now()-petAt<700)return;petAt=now();petUntil=now()+1600;const P=pers();
  if(S.run&&S.run.kind==='focus'&&S.run.paused==null){say('Hehe, thank you! Back to focusing.',true);scene();return}
  if(P.petShy)feelOv={f:'shy',until:now()+3000};else happyUntil=now()+2400;
@@ -821,7 +886,7 @@ function logSession(min,subject,src,done){const earned=reward(min,done);S.sessio
 function finish(done){const r=S.run;if(!r)return;S.run=null;
  if(r.kind==='break'){say('Break’s over. Ready for another round?');offerBreak=false;chime();if(done)gardenBreakDone()}
  else{const mm=done?r.dur:Math.floor((r.dur*60000-(r.paused!=null?r.paused:Math.max(0,r.endAt-now())))/60000);
-  if(mm>=5){const e=logSession(mm,r.subject,'timer',done);if(r.mood)S.sessions[S.sessions.length-1].mood=r.mood;if(done)gardenSessionDone();chime();say(done?`We did it! ${mm} minutes. +${e} acorns.`:`${mm} minutes counts. +${e} acorns.`);offerBreak=true}else say('That’s okay. We can try again anytime.')}
+  if(mm>=5){const e=logSession(mm,r.subject,'timer',done);if(r.mood)S.sessions[S.sessions.length-1].mood=r.mood;if(r.together&&done)togetherBonus();if(done)gardenSessionDone();chime();say(done?`We did it! ${mm} minutes. +${e} acorns.`:`${mm} minutes counts. +${e} acorns.`);offerBreak=true}else say('That’s okay. We can try again anytime.')}
  save();renderAll()}
 function startRun(kind,min,subject){pv=null;if(kind!=='break'&&tab==='style')tab='focus';try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume()}catch(x){}S.run={kind,dur:min,endAt:now()+min*60000,paused:null,subject:subject||'',started:now()};offerBreak=false;say(kind==='break'?LINES.brk:LINES.focus[0]);save();renderAll()}
 
@@ -1095,6 +1160,7 @@ $('#view').addEventListener('click',e=>{const t=e.target.closest('[data-act]');i
  switch(a){
  case'tab':tab=v;renderAll();break;
  case'dur':S.dur=+v;save();renderView();break;
+ case'together':{openTogether();break}
  case'start':{const sub=$('#subj').value.trim();S.lastSubject=sub;if(S.moodAsk)askMood(sub);else startRun('focus',S.dur,sub);break}
  case'break':startRun('break',5,'');break;
  case'pause':{const r=S.run;if(r.paused!=null){r.endAt=now()+r.paused;r.paused=null;say('Back to it. I’m with you.')}else{r.paused=remaining();say(LINES.pause)}save();renderAll();break}
@@ -1160,11 +1226,16 @@ function welcome(){if(S.welcomed)return;let step=1,sp=S.species,pr=PERS[S.pers]?
   :`<div class="wcard"><h2 style="font-size:clamp(30px,5vw,42px)">Choose your study buddy</h2><p class="by" style="margin-bottom:18px">You can change this anytime in Customize.</p><div class="pick">${Object.keys(SP).map(k=>`<button data-w="sp" data-v="${k}" aria-pressed="${sp===k}">${mini(k,0)}${SP[k].label}</button>`).join('')}</div><label for="wName" style="text-align:left">Name your buddy</label><input id="wName" maxlength="20" value="${esc(SP[sp].name)}"><label style="text-align:left">Pick a personality</label><div class="perspick">${Object.keys(PERS).map(k=>`<button data-w="pers" data-v="${k}" aria-pressed="${pr===k}"><b>${PERS[k].n}</b><span>${PERS[k].d}</span></button>`).join('')}</div><button class="btn" data-w="done">Enter Pawgress</button></div>`)};
  w.addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;const k=b.dataset.w;
   if(k==='next'){step=2;draw()}else if(k==='pers'){pr=b.dataset.v;w.querySelectorAll('[data-w=pers]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===pr))}else if(k==='sp'){const cur=w.querySelector('#wName').value.trim();const was=SP[sp].name;sp=b.dataset.v;draw();w.querySelector('#wName').value=(!cur||cur===was)?SP[sp].name:cur}
-  else if(k==='done'){S.species=sp;S.pers=pr;S.ci=0;S.name=w.querySelector('#wName').value.trim().slice(0,20)||SP[sp].name;S.welcomed=true;S.lastSeen=now();save();renderAll();say(greet(),true);w.classList.add('out');setTimeout(()=>w.remove(),650)}});
+  else if(k==='done'){S.species=sp;S.pers=pr;S.ci=0;S.name=w.querySelector('#wName').value.trim().slice(0,20)||SP[sp].name;S.welcomed=true;S.lastSeen=now();save();renderAll();say(greet(),true);if(pendingJoin){const L=pendingJoin;pendingJoin=null;setTimeout(()=>handleLink(L),900)}w.classList.add('out');setTimeout(()=>w.remove(),650)}});
  draw();document.body.appendChild(w)}
 
 /* ---------- loop ---------- */
 function tick(){const r=S.run;if(r&&r.paused==null&&remaining()<=0){finish(true);return}
+ if(S.tg){const T=S.tg,end=tgEnd();
+  if(!T.started&&!r&&now()>=T.t&&end-now()>60000){T.started=true;document.querySelector('.tgpick')?.remove();document.querySelector('.moodpick')?.remove();const sub=($('#subj')&&$('#subj').value.trim())||S.lastSubject||'';startRun('focus',Math.max(1,Math.ceil((end-now())/60000)),sub);S.run.endAt=end;S.run.together=true;save();renderAll();say(`${tgWho()} ${T.friends.length>1?'are':'is'} here! Let’s focus together.`,true);return}
+  if(!T.started&&r&&now()>=T.t){T.started=true;save()}
+  if(now()>end+10*60000){S.tg=null;save();renderAll();return}
+  const cd=$('#tgcd');if(cd){if(now()>=T.t)renderAll();else cd.textContent=fmt(T.t-now())}const cd2=document.querySelector('[data-tgcd]');if(cd2)cd2.textContent=fmt(Math.max(0,T.t-now()))}
  const c=$('#clock');if(c&&r){const left=remaining();c.textContent=fmt(left);const p=$('#prog');if(p)p.style.width=(100-left/(r.dur*60000)*100).toFixed(1)+'%'}
  const m=computeMood(),n=isNight();if(!drag&&(m!==mood||n!==lastNight)){lastNight=n;mood=m;scene()}
  if(now()-lineAt>90000){const md=S.run&&S.run.mood&&MOODS.find(x=>x.id===S.run.mood),ex=nextExam(),exL=ex&&daysUntil(ex.date)<=14?[`${ex.name} is ${examWhen(daysUntil(ex.date))}. We’ve got this!`]:[];const L=m==='focus'?(md?[...md.lines,...LINES.focus.slice(0,2)]:LINES.focus):m==='sleep'?[LINES.sleep]:[...pers().idle,...pers().idle,...((FEEL[m]||FEEL.idle).lines),...((FEEL[m]||FEEL.idle).lines),LINES.idle[0],...exL,...exL];say(L[Math.floor(Math.random()*L.length)])}}
@@ -1174,6 +1245,9 @@ advRegrant();applyTheme();renderMusic();renderAll();{const ex=nextExam(),k=ex&&d
 {const gap=S.lastSeen?now()-S.lastSeen:0;if(S.welcomed&&!S.run&&!isNight()&&gap>36*3600000){feelOv={f:'lonely',until:now()+2600};mood=computeMood();scene();say('…oh?',true);setTimeout(()=>{feelOv=null;happyUntil=now()+3600;mood=computeMood();scene();say(S.userName?`${S.userName}! You’re back! I missed you so much.`:'You’re back! I missed you so much.',true)},2600)}
  else say(S.run?LINES.focus[1]:isNight()?LINES.sleep:(S.userName&&S.pers==='bubbly'?greet().replace('Hiii!',`Hiii ${S.userName}!`):greet()))}
 {const touch=()=>{S.lastSeen=now();try{const raw=localStorage.getItem(KEY);if(!raw)return;const o=JSON.parse(raw);o.lastSeen=S.lastSeen;localStorage.setItem(KEY,JSON.stringify(o))}catch(x){}};touch();addEventListener('pagehide',touch);document.addEventListener('visibilitychange',()=>{if(document.hidden)touch()})}
+{const L=readLink(location.hash);if(L){try{history.replaceState(null,'',location.pathname+location.search)}catch(x){}setTimeout(()=>handleLink(L,true),S.welcomed?700:0)}}
+addEventListener('storage',e=>{if(e.key!==KEY||!e.newValue||!S.tg)return;try{const o=JSON.parse(e.newValue),t=cleanTg(o.tg);if(t&&t.i===S.tg.i){let ch=false;t.friends.forEach(f=>{if(!S.tg.friends.some(x=>x.n===f.n&&x.b===f.b&&x.sp===f.sp)){addFriend(f);ch=true}});if(ch){save();renderAll()}}}catch(x){}});
+addEventListener('hashchange',()=>{const L=readLink(location.hash);if(L){try{history.replaceState(null,'',location.pathname+location.search)}catch(x){}handleLink(L)}});
 ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},{passive:true}));welcome();
 
 /* ---------- account sync ---------- */
